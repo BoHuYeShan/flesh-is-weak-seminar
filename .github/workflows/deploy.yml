@@ -121,12 +121,41 @@ jobs:
               updatedAt: new Date().toISOString()
             };
             
+            // 下载头像到本地
+            const avatarDir = path.join(process.cwd(), 'public', 'avatars');
+            if (!fs.existsSync(avatarDir)) {
+              fs.mkdirSync(avatarDir, { recursive: true });
+            }
+            
+            // 收集所有需要下载的头像 URL
+            const avatarUrls = new Set();
+            allDiscussions.forEach(d => { if (d.avatar) avatarUrls.add(d.avatar); });
+            contributors.forEach(c => { if (c.avatar) avatarUrls.add(c.avatar); });
+            
+            // 下载头像
+            for (const url of avatarUrls) {
+              try {
+                const filename = url.split('/').pop().split('?')[0] + '.png';
+                const response = await fetch(url);
+                if (response.ok) {
+                  const buffer = await response.arrayBuffer();
+                  fs.writeFileSync(path.join(avatarDir, filename), Buffer.from(buffer));
+                  // 更新 URL 为本地路径
+                  const localPath = `./avatars/${filename}`;
+                  allDiscussions.forEach(d => { if (d.avatar === url) d.avatar = localPath; });
+                  contributors.forEach(c => { if (c.avatar === url) c.avatar = localPath; });
+                }
+              } catch (e) {
+                console.log(`Failed to download avatar: ${url}`);
+              }
+            }
+            
             fs.writeFileSync(
               path.join(dataDir, 'discussions.json'),
               JSON.stringify(data, null, 2)
             );
             
-            console.log(`Fetched ${allDiscussions.length} discussions and ${contributors.length} contributors`);
+            console.log(`Fetched ${allDiscussions.length} discussions, ${contributors.length} contributors, ${avatarUrls.size} avatars`);
 
       - name: Build
         run: npm run build
