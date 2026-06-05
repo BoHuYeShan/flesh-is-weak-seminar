@@ -1,13 +1,32 @@
 /* ============================================
    血肉苦短研讨班 - Design System
-   Reference: code.html
    
-   Deep dark theme with cyan accent
+   浅色 + 深色双主题
    Fonts: Playfair Display + LXGW WenKai + JetBrains Mono
    ============================================ */
 
-/* ---- CSS Variables ---- */
+/* ---- CSS Variables: 浅色模式 ---- */
 :root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --card: #f4f4f0;
+  --border: #e2e2dc;
+  --cyan: #00a87d;
+  --cyan-dim: rgba(0, 168, 125, 0.1);
+  --red: #d4334a;
+  --gold: #c88b00;
+  --blue: #3a5ec8;
+  --purple: #7a4fd4;
+  --text: #1a1a1a;
+  --muted: #555555;
+  --faint: #999999;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'LXGW WenKai', 'Songti SC', serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+}
+
+/* ---- CSS Variables: 深色模式 ---- */
+.dark {
   --bg: #06060a;
   --surface: #0c0c14;
   --card: #13131f;
@@ -21,9 +40,6 @@
   --text: #e8e6e3;
   --muted: #5a5a72;
   --faint: #3a3a52;
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'LXGW WenKai', 'Songti SC', serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
 }
 
 /* ---- VitePress Overrides ---- */
@@ -41,6 +57,8 @@
   --vp-c-brand-soft: var(--cyan-dim);
   --vp-font-family-base: var(--font-body);
   --vp-font-family-mono: var(--font-mono);
+  --vp-sidebar-bg-color: var(--surface);
+  --vp-nav-bg-color: var(--surface);
 }
 
 /* ---- Global ---- */
@@ -65,7 +83,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); color: var(--text); l
 .VPHero .tagline { font-family: var(--font-body) !important; color: var(--muted) !important; }
 
 /* ---- Nav ---- */
-.VPNav { background: rgba(6, 6, 10, 0.9) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; border-bottom: 1px solid var(--border) !important; }
+.VPNav { background: var(--surface) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; border-bottom: 1px solid var(--border) !important; }
 
 /* ---- Features ---- */
 .VPFeature { background: var(--surface) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; box-shadow: none !important; }
