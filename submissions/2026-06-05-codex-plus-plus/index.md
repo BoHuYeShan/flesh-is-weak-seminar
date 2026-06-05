@@ -4,6 +4,7 @@ author: BOHUYESHAN-APB
 date: 2026-06-05
 tags: [AI, Codex, 工具, 开源]
 summary: 面向 Codex App 的外部增强启动器和管理工具，通过 CDP 注入增强脚本，支持中转注入、插件解锁、会话管理等功能
+license: CC BY 4.0
 ---
 
 ## 项目链接

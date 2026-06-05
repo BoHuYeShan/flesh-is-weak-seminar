@@ -4,6 +4,7 @@ author: 群友投稿
 date: 2026-06-05
 tags: [多Agent, 蜂群, 开源, 架构解析]
 summary: 深入解析 Swarm-IDE 的核心架构：两原语（create+send）如何生成任意拓扑，IM 系统与 Agent Loop 的解耦设计，以及液态拓扑的自组织机制。
+license: CC BY 4.0
 ---
 
 ## 项目概览
