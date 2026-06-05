@@ -19,11 +19,9 @@ summary: 一句话简介，会显示在卡片上
 
 ### 图片引用
 
-在正文中引用图片：
+在正文中引用图片（请先将图片放入 images/ 目录）：
 
-![图片描述](images/your-image.png)
-
-（请将 your-image.png 替换为实际图片文件名）
+![图片描述](images/xxx.png)
 
 ## 相关链接
 
