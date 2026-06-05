@@ -106,7 +106,7 @@ function setCategory(id) { activeCategory.value = id }
   <div v-else class="dlist">
     <template v-for="item in filtered" :key="item.id">
       <!-- 投稿卡片 -->
-      <div v-if="item.isSubmission" class="dcard submission" @click="window.location.href='/flesh-is-weak-seminar/submissions'">
+      <a v-if="item.isSubmission" href="/flesh-is-weak-seminar/submissions.html" class="dcard submission">
         <div class="dcard-top">
           <div class="dcard-badge">✍️ 投稿</div>
           <div>
@@ -119,7 +119,7 @@ function setCategory(id) { activeCategory.value = id }
           <span>{{ item.dateFormatted }}</span>
           <span class="dcard-link">查看详情 →</span>
         </div>
-      </div>
+      </a>
       <!-- 讨论卡片 -->
       <a v-else :href="item.url" target="_blank" class="dcard">
         <div class="dcard-top">
