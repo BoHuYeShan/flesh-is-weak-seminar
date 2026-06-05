@@ -1,0 +1,19 @@
+{
+  "generated": "2026-06-05T22:32:07.137001",
+  "totalIssues": 1,
+  "issues": [
+    {
+      "id": "2026-W23",
+      "year": 2026,
+      "month": 6,
+      "week": 23,
+      "label": "第23期 · 六月第2周",
+      "dateRange": "6月8日 – 6月14日",
+      "count": {
+        "submissions": 2,
+        "discussions": 0,
+        "news": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+name: Build Magazine JSON
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'submissions/**'
+      - 'public/data/discussions.json'
+      - 'public/data/news/**'
+      - 'scripts/magazine-build.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-magazine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build magazine JSON
+        run: python scripts/magazine-build.py
+
+      - name: Commit magazine data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "actions@github.com"
+          git add public/data/magazine/
+          git diff --cached --quiet || git commit -m "📚 杂志数据更新 $(date +%Y-%m-%d)"
+          git push
