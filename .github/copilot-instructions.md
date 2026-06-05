@@ -1,6 +1,6 @@
-# 血肉苦短研讨班 - AI 操作规范
+# 血肉苦短研讨班 - GitHub Copilot 规范
 
-> 适用工具: Codex, OpenCode, Pi
+> 适用工具: GitHub Copilot
 
 ## 仓库信息
 
@@ -8,14 +8,6 @@
 - 框架: VitePress + Vue 3
 - 部署: GitHub Pages
 - 数据来源: GitHub Discussions API（实时获取，无需重建）
-
-## 目录结构
-
-```
-.vitepress/          # VitePress 配置和主题
-*.md                 # 页面文件（首页、新闻、工具、讨论、贡献者）
-.github/workflows/   # GitHub Actions
-```
 
 ## Discussions 分类
 
@@ -47,19 +39,6 @@ mutation {
     }
   }
 }'
-
-# 获取分类 ID
-gh api graphql -f query='
-query {
-  repository(owner: "BoHuYeShan", name: "flesh-is-weak-seminar") {
-    discussionCategories(first: 10) {
-      nodes {
-        id
-        name
-      }
-    }
-  }
-}'
 ```
 
 ### 方式二：浏览器操控
@@ -81,29 +60,6 @@ query {
 2. **标题简洁明了** - 一句话描述内容
 3. **正文详细** - 包含背景、内容、链接
 4. **添加图片** - 支持直接上传图片
-
-### 示例
-
-**新闻类**：
-```
-标题: OpenAI 发布 GPT-5
-分类: Announcements
-正文: OpenAI 今日正式发布 GPT-5，支持多模态输入...
-```
-
-**小工具类**：
-```
-标题: 分享一个 Markdown 转 HTML 工具
-分类: Show and tell
-正文: 我开发了一个轻量级的 Markdown 转 HTML 工具...
-```
-
-**讨论类**：
-```
-标题: 大家觉得 Rust 和 Go 哪个更适合写 CLI？
-分类: General
-正文: 最近在考虑重写一个 CLI 工具，纠结用 Rust 还是 Go...
-```
 
 ## 禁止操作
 
