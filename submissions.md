@@ -62,57 +62,93 @@ function scrollToHeading(id) {
   }
 }
 
-// markdown 转 HTML（支持表格、代码块等）
+// markdown 转 HTML
 function renderMarkdown(text) {
   if (!text) return ''
   
-  let html = text
+  // 按行处理
+  const lines = text.split('\n')
+  let html = ''
+  let inList = false
+  let inCode = false
+  let codeContent = ''
+  
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i]
+    
     // 代码块
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="lang-$1">$2</code></pre>')
-    // 行内代码
-    .replace(/`(.*?)`/g, '<code>$1</code>')
-    // 表格
-    .replace(/\|(.+)\|\n\|[-\s|]+\|\n((?:\|.+\|\n?)*)/g, (match, header, rows) => {
-      const headers = header.split('|').map(h => h.trim()).filter(Boolean)
-      const rowsArr = rows.trim().split('\n').map(row => 
-        row.split('|').map(cell => cell.trim()).filter(Boolean)
-      )
-      let table = '<table><thead><tr>'
-      headers.forEach(h => { table += `<th>${h}</th>` })
-      table += '</tr></thead><tbody>'
-      rowsArr.forEach(row => {
-        table += '<tr>'
-        row.forEach(cell => { table += `<td>${cell}</td>` })
-        table += '</tr>'
-      })
-      table += '</tbody></table>'
-      return table
-    })
+    if (line.startsWith('```')) {
+      if (inCode) {
+        html += `<pre><code>${codeContent}</code></pre>`
+        codeContent = ''
+        inCode = false
+      } else {
+        inCode = true
+      }
+      continue
+    }
+    if (inCode) {
+      codeContent += line + '\n'
+      continue
+    }
+    
+    // 空行
+    if (line.trim() === '') {
+      if (inList) { html += '</ul>'; inList = false }
+      continue
+    }
+    
     // 标题
-    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-    // 粗体、斜体
+    if (line.startsWith('### ')) { html += `<h3>${line.slice(4)}</h3>`; continue }
+    if (line.startsWith('## ')) { html += `<h2>${line.slice(3)}</h2>`; continue }
+    if (line.startsWith('# ')) { html += `<h1>${line.slice(2)}</h1>`; continue }
+    
+    // 列表
+    if (line.startsWith('- ') || line.startsWith('* ')) {
+      if (!inList) { html += '<ul>'; inList = true }
+      html += `<li>${processInline(line.slice(2))}</li>`
+      continue
+    }
+    
+    // 表格行
+    if (line.includes('|') && line.trim().startsWith('|')) {
+      // 跳过分隔行
+      if (line.match(/^\|[\s-|]+\|$/)) continue
+      const cells = line.split('|').filter(c => c.trim()).map(c => c.trim())
+      if (html.endsWith('</tr>') || html.endsWith('</thead>')) {
+        html += '<tr>' + cells.map(c => `<td>${processInline(c)}</td>`).join('') + '</tr>'
+      } else {
+        html += '<table><thead><tr>' + cells.map(c => `<th>${processInline(c)}</th>`).join('') + '</tr></thead><tbody>'
+      }
+      continue
+    }
+    
+    // 分割线
+    if (line.match(/^---+$/)) { html += '<hr>'; continue }
+    
+    // 普通段落
+    if (inList) { html += '</ul>'; inList = false }
+    html += `<p>${processInline(line)}</p>`
+  }
+  
+  if (inList) html += '</ul>'
+  if (inCode) html += `<pre><code>${codeContent}</code></pre>`
+  
+  // 关闭表格
+  if (html.includes('<table>') && !html.includes('</table>')) {
+    html += '</tbody></table>'
+  }
+  
+  return html
+}
+
+function processInline(text) {
+  return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    // 链接、图片
+    .replace(/`(.*?)`/g, '<code>$1</code>')
     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
     .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" />')
-    // 列表
-    .replace(/^- (.*$)/gm, '<li>$1</li>')
-    .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
-    // 分割线
-    .replace(/^---$/gm, '<hr>')
-    // 引用
-    .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
-    // 段落
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>')
-  
-  // 包装列表项
-  html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
-  
-  return `<p>${html}</p>`
 }
 </script>
 
