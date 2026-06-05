@@ -1,11 +1,14 @@
-name: Deploy to GitHub Pages
+name: Fetch Data and Deploy
 
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '0 */2 * * *'  # 每2小时更新一次
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -14,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  fetch-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,6 +32,102 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Fetch Discussions Data
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // 确保 public/data 目录存在
+            const dataDir = path.join(process.cwd(), 'public', 'data');
+            if (!fs.existsSync(dataDir)) {
+              fs.mkdirSync(dataDir, { recursive: true });
+            }
+            
+            // 使用 GraphQL 获取所有 Discussions
+            const query = `
+              query {
+                repository(owner: "${context.repo.owner}", name: "${context.repo.repo}") {
+                  discussions(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
+                    nodes {
+                      number
+                      title
+                      body
+                      createdAt
+                      updatedAt
+                      comments { totalCount }
+                      category { name id }
+                      author { login avatarUrl url }
+                      url
+                    }
+                  }
+                  stargazerCount
+                }
+              }
+            `;
+            
+            const response = await github.graphql(query);
+            const discussions = response.repository.discussions.nodes;
+            
+            // 按分类整理数据
+            const categories = {
+              'Announcements': { id: 'DIC_kwDOSxxtP84C-jY2', name: '新闻', emoji: '📰' },
+              'Show and tell': { id: 'DIC_kwDOSxxtP84C-jY6', name: '小工具', emoji: '🔧' },
+              'General': { id: 'DIC_kwDOSxxtP84C-jY3', name: '讨论', emoji: '💬' },
+              'Q&A': { id: 'DIC_kwDOSxxtP84C-jY4', name: '问答', emoji: '🙏' }
+            };
+            
+            const allDiscussions = discussions.map(d => ({
+              id: d.number,
+              title: d.title,
+              body: d.body?.substring(0, 300) || '',
+              category: d.category?.name || 'General',
+              categoryEmoji: categories[d.category?.name]?.emoji || '💬',
+              author: d.author?.login || 'Unknown',
+              avatar: d.author?.avatarUrl || '',
+              authorUrl: d.author?.url || '',
+              date: d.createdAt,
+              dateFormatted: new Date(d.createdAt).toLocaleDateString('zh-CN'),
+              comments: d.comments?.totalCount || 0,
+              url: d.url
+            }));
+            
+            // 获取贡献者
+            const contribsResponse = await github.rest.repos.listContributors({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+            
+            const contributors = contribsResponse.data.map(c => ({
+              login: c.login,
+              avatar: c.avatar_url,
+              contributions: c.contributions,
+              url: c.html_url
+            }));
+            
+            // 保存数据
+            const data = {
+              discussions: allDiscussions,
+              contributors: contributors,
+              stats: {
+                total: allDiscussions.length,
+                news: allDiscussions.filter(d => d.category === 'Announcements').length,
+                tools: allDiscussions.filter(d => d.category === 'Show and tell').length,
+                discussions: allDiscussions.filter(d => d.category === 'General').length,
+                contributors: contributors.length
+              },
+              updatedAt: new Date().toISOString()
+            };
+            
+            fs.writeFileSync(
+              path.join(dataDir, 'discussions.json'),
+              JSON.stringify(data, null, 2)
+            );
+            
+            console.log(`Fetched ${allDiscussions.length} discussions and ${contributors.length} contributors`);
+
       - name: Build
         run: npm run build
 
@@ -41,7 +140,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
+    needs: fetch-and-build
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages

@@ -10,14 +10,9 @@ const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const res = await fetch('https://api.github.com/repos/BoHuYeShan/flesh-is-weak-seminar/contributors')
+    const res = await fetch('./data/discussions.json')
     const data = await res.json()
-    contributors.value = data.map(c => ({
-      login: c.login,
-      avatar: c.avatar_url,
-      contributions: c.contributions,
-      url: c.html_url
-    }))
+    contributors.value = data.contributors
   } catch (e) {
     console.error(e)
   } finally {
@@ -37,45 +32,11 @@ onMounted(async () => {
 </div>
 
 <style>
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px 28px;
-}
-.card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.2s;
-}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; max-width: 800px; margin: 0 auto; padding: 40px 28px; }
+.card { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
 .card:hover { border-color: var(--cyan); transform: translateY(-2px); }
-.card img {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--border);
-}
-.card .name {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-}
-.card .count {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--faint);
-}
+.card img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border); }
+.card .name { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--text); }
+.card .count { font-family: var(--font-mono); font-size: 11px; color: var(--faint); }
 .loading, .empty { text-align: center; padding: 40px; color: var(--faint); font-family: var(--font-mono); }
 </style>

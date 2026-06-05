@@ -10,39 +10,9 @@ const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const query = `
-      query {
-        repository(owner: "BoHuYeShan", name: "flesh-is-weak-seminar") {
-          discussions(first: 20, categoryId: "DIC_kwDOSxxtP84C-jY2", orderBy: {field: CREATED_AT, direction: DESC}) {
-            nodes {
-              number
-              title
-              body
-              createdAt
-              comments { totalCount }
-              author { login avatarUrl }
-              url
-            }
-          }
-        }
-      }
-    `
-    const res = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query })
-    })
+    const res = await fetch('./data/discussions.json')
     const data = await res.json()
-    items.value = data.data.repository.discussions.nodes.map(d => ({
-      id: d.number,
-      title: d.title,
-      body: d.body?.substring(0, 200) + '...',
-      author: d.author?.login || 'Unknown',
-      avatar: d.author?.avatarUrl || '',
-      date: new Date(d.createdAt).toLocaleDateString('zh-CN'),
-      comments: d.comments?.totalCount || 0,
-      url: d.url
-    }))
+    items.value = data.discussions.filter(d => d.category === 'Announcements')
   } catch (e) {
     console.error(e)
   } finally {
@@ -64,7 +34,7 @@ onMounted(async () => {
     </div>
     <div class="card-meta">
       <span>{{ item.author }}</span>
-      <span>{{ item.date }}</span>
+      <span>{{ item.dateFormatted }}</span>
       <span v-if="item.comments">💬 {{ item.comments }}</span>
     </div>
   </a>
@@ -72,16 +42,7 @@ onMounted(async () => {
 
 <style>
 .list { display: grid; gap: 12px; max-width: 800px; margin: 0 auto; padding: 40px 28px; }
-.card {
-  display: block;
-  padding: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.2s;
-}
+.card { display: block; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
 .card:hover { border-color: var(--cyan); transform: translateY(-2px); }
 .card-header { display: flex; gap: 16px; margin-bottom: 12px; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; }

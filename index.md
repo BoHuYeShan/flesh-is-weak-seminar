@@ -33,14 +33,15 @@ import { onMounted, ref, computed } from 'vue'
 
 const discussions = ref([])
 const contributors = ref([])
+const stats = ref({ total: 0, news: 0, tools: 0, discussions: 0, contributors: 0 })
 const loading = ref(true)
 const activeCategory = ref('all')
 
 const categories = [
   { id: 'all', name: '全部', emoji: '🔥' },
-  { id: 'Announcements', name: '新闻', emoji: '📰', categoryId: 'DIC_kwDOSxxtP84C-jY2' },
-  { id: 'Show and tell', name: '小工具', emoji: '🔧', categoryId: 'DIC_kwDOSxxtP84C-jY6' },
-  { id: 'General', name: '讨论', emoji: '💬', categoryId: 'DIC_kwDOSxxtP84C-jY3' }
+  { id: 'Announcements', name: '新闻', emoji: '📰' },
+  { id: 'Show and tell', name: '小工具', emoji: '🔧' },
+  { id: 'General', name: '讨论', emoji: '💬' }
 ]
 
 const filtered = computed(() => {
@@ -50,52 +51,11 @@ const filtered = computed(() => {
 
 onMounted(async () => {
   try {
-    // 使用 GraphQL API 获取 Discussions
-    const discQuery = `
-      query {
-        repository(owner: "BoHuYeShan", name: "flesh-is-weak-seminar") {
-          discussions(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
-            nodes {
-              number
-              title
-              body
-              createdAt
-              comments { totalCount }
-              category { name }
-              author { login avatarUrl }
-              url
-            }
-          }
-        }
-      }
-    `
-    const discRes = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: discQuery })
-    })
-    const discData = await discRes.json()
-    discussions.value = discData.data.repository.discussions.nodes.map(d => ({
-      id: d.number,
-      title: d.title,
-      body: d.body?.substring(0, 150) + '...',
-      category: d.category?.name || 'General',
-      author: d.author?.login || 'Unknown',
-      avatar: d.author?.avatarUrl || '',
-      date: new Date(d.createdAt).toLocaleDateString('zh-CN'),
-      comments: d.comments?.totalCount || 0,
-      url: d.url
-    }))
-
-    // 使用 REST API 获取贡献者（这个应该支持 CORS）
-    const contribRes = await fetch('https://api.github.com/repos/BoHuYeShan/flesh-is-weak-seminar/contributors')
-    const contribData = await contribRes.json()
-    contributors.value = contribData.map(c => ({
-      login: c.login,
-      avatar: c.avatar_url,
-      contributions: c.contributions,
-      url: c.html_url
-    }))
+    const res = await fetch('./data/discussions.json')
+    const data = await res.json()
+    discussions.value = data.discussions
+    contributors.value = data.contributors
+    stats.value = data.stats
   } catch (e) {
     console.error(e)
   } finally {
@@ -129,7 +89,7 @@ function setCategory(id) { activeCategory.value = id }
       </div>
       <div class="dcard-meta">
         <span>{{ item.author }}</span>
-        <span>{{ item.date }}</span>
+        <span>{{ item.dateFormatted }}</span>
         <span v-if="item.comments">💬 {{ item.comments }}</span>
       </div>
     </a>
@@ -152,165 +112,28 @@ function setCategory(id) { activeCategory.value = id }
 </section>
 
 <style>
-.sec {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 80px 28px;
-}
-.sec-head {
-  margin-bottom: 40px;
-}
-.lab {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--cyan);
-  margin-bottom: 12px;
-  display: block;
-}
-.sec h2 {
-  font-family: var(--font-display);
-  font-size: clamp(28px, 4vw, 40px);
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  font-weight: 700;
-  color: var(--text);
-}
-
-/* Categories */
-.cats {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-.cats button {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--muted);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.cats button.on {
-  background: var(--cyan);
-  border-color: var(--cyan);
-  color: var(--bg);
-}
-.cats button:hover:not(.on) {
-  border-color: var(--cyan);
-  color: var(--cyan);
-}
-
-/* Discussion list */
-.dlist {
-  display: grid;
-  gap: 12px;
-}
-.dcard {
-  display: block;
-  padding: 20px 24px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.2s;
-}
-.dcard:hover {
-  border-color: var(--cyan);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 229, 176, 0.1);
-}
-.dcard-top {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--border);
-}
-.dcard h3 {
-  margin: 0 0 6px;
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-}
-.dcard p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-.dcard-meta {
-  display: flex;
-  gap: 16px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--faint);
-}
-
-/* Contributors */
-.contribs {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-}
-.contrib {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.2s;
-}
-.contrib:hover {
-  border-color: var(--cyan);
-  transform: translateY(-2px);
-}
-.contrib img {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--border);
-}
-.contrib span {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-}
-.contrib .count {
-  font-size: 11px;
-  color: var(--faint);
-  font-weight: 400;
-}
-
-.empty {
-  padding: 40px 24px;
-  text-align: center;
-  color: var(--faint);
-  font-family: var(--font-mono);
-  font-size: 14px;
-}
-
-@media (max-width: 768px) {
-  .contribs { grid-template-columns: repeat(2, 1fr); }
-}
+.sec { max-width: 1080px; margin: 0 auto; padding: 80px 28px; }
+.sec-head { margin-bottom: 40px; }
+.lab { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; display: block; }
+.sec h2 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); line-height: 1.15; letter-spacing: -0.03em; font-weight: 700; color: var(--text); }
+.cats { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.cats button { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px; cursor: pointer; transition: all 0.15s; }
+.cats button.on { background: var(--cyan); border-color: var(--cyan); color: var(--bg); }
+.cats button:hover:not(.on) { border-color: var(--cyan); color: var(--cyan); }
+.dlist { display: grid; gap: 12px; }
+.dcard { display: block; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
+.dcard:hover { border-color: var(--cyan); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0, 229, 176, 0.1); }
+.dcard-top { display: flex; gap: 16px; margin-bottom: 12px; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+.dcard h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); }
+.dcard p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
+.dcard-meta { display: flex; gap: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); }
+.contribs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.contrib { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
+.contrib:hover { border-color: var(--cyan); transform: translateY(-2px); }
+.contrib img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border); }
+.contrib span { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--text); }
+.contrib .count { font-size: 11px; color: var(--faint); font-weight: 400; }
+.empty { padding: 40px 24px; text-align: center; color: var(--faint); font-family: var(--font-mono); font-size: 14px; }
+@media (max-width: 768px) { .contribs { grid-template-columns: repeat(2, 1fr); } }
 </style>
