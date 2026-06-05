@@ -130,7 +130,7 @@ function scrollToBottom() {
     </div>
     
     <!-- 返回顶部/底部按钮 -->
-    <div class="scroll-buttons">
+    <div v-if="showDetail" class="scroll-buttons">
       <button class="scroll-btn" @click="scrollToTop" title="返回顶部">↑</button>
       <button class="scroll-btn" @click="scrollToBottom" title="返回底部">↓</button>
     </div>

@@ -1,79 +1,107 @@
 export function renderMarkdown(text) {
   if (!text) return ''
   
-  const lines = text.split('\n')
+  // 先处理 block 级元素，再处理 inline 元素
+  const blocks = text.split(/\n\n+/)
   let html = ''
-  let inList = false
-  let inCode = false
-  let codeContent = ''
-  let inTable = false
   
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i]
+  for (const block of blocks) {
+    const trimmed = block.trim()
+    if (!trimmed) continue
     
-    if (line.startsWith('```')) {
-      if (inCode) {
-        html += '<pre><code>' + escapeHtml(codeContent) + '</code></pre>'
-        codeContent = ''
-        inCode = false
-      } else {
-        inCode = true
+    // 代码块
+    if (trimmed.startsWith('```')) {
+      const match = trimmed.match(/^```(\w*)\n([\s\S]*?)```$/)
+      if (match) {
+        html += '<pre><code>' + escapeHtml(match[2].trim()) + '</code></pre>'
+        continue
       }
-      continue
-    }
-    if (inCode) {
-      codeContent += line + '\n'
-      continue
     }
     
-    if (line.trim() === '') {
-      if (inList) { html += '</ul>'; inList = false }
-      if (inTable) { html += '</tbody></table>'; inTable = false }
+    // 标题
+    if (trimmed.startsWith('### ')) {
+      html += '<h3>' + processInline(trimmed.slice(4)) + '</h3>'
       continue
     }
-    
-    if (line.startsWith('### ')) { html += '<h3>' + processInline(line.slice(4)) + '</h3>'; continue }
-    if (line.startsWith('## ')) { html += '<h2>' + processInline(line.slice(3)) + '</h2>'; continue }
-    if (line.startsWith('# ')) { html += '<h1>' + processInline(line.slice(2)) + '</h1>'; continue }
-    
-    if (line.startsWith('- ') || line.startsWith('* ')) {
-      if (!inList) { html += '<ul>'; inList = true }
-      html += '<li>' + processInline(line.slice(2)) + '</li>'
+    if (trimmed.startsWith('## ')) {
+      html += '<h2>' + processInline(trimmed.slice(3)) + '</h2>'
+      continue
+    }
+    if (trimmed.startsWith('# ')) {
+      html += '<h1>' + processInline(trimmed.slice(2)) + '</h1>'
       continue
     }
     
-    if (line.includes('|') && line.trim().startsWith('|')) {
-      if (line.match(/^\|[\s\-:|]+\|$/)) continue
-      const cells = line.split('|').filter(c => c.trim()).map(c => c.trim())
-      if (!inTable) {
-        html += '<table><thead><tr>' + cells.map(c => '<th>' + processInline(c) + '</th>').join('') + '</tr></thead><tbody>'
-        inTable = true
-      } else {
-        html += '<tr>' + cells.map(c => '<td>' + processInline(c) + '</td>').join('') + '</tr>'
+    // 分割线
+    if (trimmed.match(/^---+$/)) {
+      html += '<hr>'
+      continue
+    }
+    
+    // 表格
+    if (trimmed.includes('|') && trimmed.includes('\n')) {
+      const tableLines = trimmed.split('\n').filter(l => l.trim())
+      const hasSeparator = tableLines.some(l => l.match(/^\|[\s\-:|]+\|$/))
+      
+      if (hasSeparator && tableLines.length >= 2) {
+        html += '<table>'
+        for (let i = 0; i < tableLines.length; i++) {
+          const line = tableLines[i]
+          if (line.match(/^\|[\s\-:|]+\|$/)) continue
+          
+          const cells = line.split('|').filter((c, idx, arr) => idx > 0 && idx < arr.length - 1).map(c => c.trim())
+          
+          if (i === 0) {
+            html += '<thead><tr>' + cells.map(c => '<th>' + processInline(c) + '</th>').join('') + '</tr></thead><tbody>'
+          } else {
+            html += '<tr>' + cells.map(c => '<td>' + processInline(c) + '</td>').join('') + '</tr>'
+          }
+        }
+        html += '</tbody></table>'
+        continue
       }
+    }
+    
+    // 列表
+    const listLines = trimmed.split('\n').filter(l => l.trim().startsWith('- ') || l.trim().startsWith('* '))
+    if (listLines.length > 0 && listLines.length === trimmed.split('\n').filter(l => l.trim()).length) {
+      html += '<ul>'
+      for (const line of listLines) {
+        const content = line.replace(/^\s*[-*]\s+/, '')
+        html += '<li>' + processInline(content) + '</li>'
+      }
+      html += '</ul>'
       continue
     }
     
-    if (line.match(/^---+$/)) { html += '<hr>'; continue }
+    // 引用
+    if (trimmed.startsWith('> ')) {
+      html += '<blockquote>' + processInline(trimmed.slice(2)) + '</blockquote>'
+      continue
+    }
     
-    if (inList) { html += '</ul>'; inList = false }
-    if (inTable) { html += '</tbody></table>'; inTable = false }
-    html += '<p>' + processInline(line) + '</p>'
+    // 普通段落
+    html += '<p>' + processInline(trimmed) + '</p>'
   }
-  
-  if (inList) html += '</ul>'
-  if (inTable) html += '</tbody></table>'
-  if (inCode) html += '<pre><code>' + escapeHtml(codeContent) + '</code></pre>'
   
   return html
 }
 
 function processInline(text) {
-  return escapeHtml(text)
+  // 先转义 HTML
+  let result = escapeHtml(text)
+  
+  // 再处理 markdown 语法
+  result = result
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`(.*?)`/g, '<code>$1</code>')
-    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+  
+  // 处理段落内的换行
+  result = result.replace(/\n/g, '<br>')
+  
+  return result
 }
 
 function escapeHtml(text) {
