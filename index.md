@@ -106,7 +106,7 @@ function setCategory(id) { activeCategory.value = id }
   <div v-else class="dlist">
     <template v-for="item in filtered" :key="item.id">
       <!-- 投稿卡片 -->
-      <div v-if="item.isSubmission" class="dcard submission" @click="$router.push('/submissions')">
+      <div v-if="item.isSubmission" class="dcard submission" @click="window.location.href='/flesh-is-weak-seminar/submissions'">
         <div class="dcard-top">
           <div class="dcard-badge">✍️ 投稿</div>
           <div>
