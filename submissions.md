@@ -2,135 +2,7 @@
 
 群友提交的优质内容。
 
-<script setup>
-import { onMounted, ref, computed, nextTick } from 'vue'
-import { renderMarkdown, extractHeadings } from './.vitepress/theme/markdown.js'
-
-const items = ref([])
-const loading = ref(true)
-const selected = ref(null)
-const headings = ref([])
-const activeH = ref('')
-
-const safeTags = computed(() => {
-  const s = selected.value
-  return (s && Array.isArray(s.tags)) ? s.tags : []
-})
-
-onMounted(async () => {
-  try {
-    const res = await fetch('./data/discussions.json')
-    const data = await res.json()
-    items.value = data.submissions || []
-  } catch (e) {
-    console.error(e)
-  } finally {
-    loading.value = false
-  }
-})
-
-function open(item) {
-  selected.value = item
-  activeH.value = ''
-  nextTick(() => {
-    const h = extractHeadings(item.body)
-    headings.value = Array.isArray(h) ? h.filter(x => x && x.text) : []
-  })
-}
-
-function close() {
-  selected.value = null
-  headings.value = []
-}
-
-function jumpTo(text) {
-  activeH.value = text
-  nextTick(() => {
-    const el = document.querySelector('.md-content')
-    if (!el) return
-    for (const h of el.querySelectorAll('h1,h2,h3')) {
-      if (h.textContent.trim() === text.trim()) {
-        h.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        break
-      }
-    }
-  })
-}
-
-function onScroll(e) {
-  const el = e.target
-  let cur = ''
-  for (const h of el.querySelectorAll('h1,h2,h3')) {
-    if (h.getBoundingClientRect().top <= 140) cur = h.textContent.trim()
-  }
-  if (cur) activeH.value = cur
-}
-
-function goTop() {
-  document.querySelector('.md-content')?.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-function goBottom() {
-  const el = document.querySelector('.md-content')
-  if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
-}
-</script>
-
-<div v-if="loading" class="loading">加载中...</div>
-<div v-else-if="items.length === 0" class="empty">暂无投稿</div>
-<div v-else class="list">
-  <div v-for="item in items" :key="item.folder" class="card" @click="open(item)">
-    <div class="card-body">
-      <div class="card-tags">
-        <span v-for="tag in item.tags" :key="tag" class="tag">{{ tag }}</span>
-      </div>
-      <h3>{{ item.title }}</h3>
-      <p>{{ item.summary }}</p>
-      <div class="card-meta">
-        <span>{{ item.author }}</span>
-        <span>{{ item.date }}</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 详情弹窗 -->
-<div v-if="selected" class="overlay" @click.self="close">
-  <div class="panel">
-
-    <!-- 左侧：目录导航 -->
-    <nav class="sidebar">
-      <div class="sidebar-title">目录</div>
-        <a v-for="(h, i) in headings" :key="i"
-           :class="['sidelink', 'lv' + (h.level || 1), { on: activeH === h.text }]"
-           @click="jumpTo(h.text)">{{ h.text || '' }}</a>
-      <div class="sidebar-actions">
-        <button @click="goTop">↑ 回顶部</button>
-        <button @click="goBottom">↓ 回底部</button>
-        <button @click="close">✕ 关闭</button>
-      </div>
-    </nav>
-
-    <!-- 右侧：文章内容 -->
-    <div class="md-content" @scroll="onScroll">
-      <header class="md-header">
-        <h2>{{ (selected && selected.title) || '' }}</h2>
-        <div class="md-meta">
-          <span>{{ (selected && selected.author) || '' }}</span>
-          <span>{{ (selected && selected.date) || '' }}</span>
-          <span v-for="tag in safeTags" :key="tag" class="tag">{{ tag }}</span>
-        </div>
-      </header>
-      <article class="md-body" v-html="selected ? renderMarkdown(selected.body || '') : ''"></article>
-      <footer class="md-footer">
-        <a v-if="selected && selected.folder" :href="'https://github.com/BoHuYeShan/flesh-is-weak-seminar/blob/main/submissions/' + selected.folder + '/index.md'" target="_blank">
-          在 GitHub 查看原始文件 →
-        </a>
-      </footer>
-    </div>
-
-  </div>
-</div>
+<SubmissionsPanel />
 
 <style>
 /* 卡片列表 */
@@ -149,7 +21,7 @@ function goBottom() {
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
 .panel { display: flex; width: 100%; max-width: 1000px; height: 85vh; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
 
-/* 左侧目录栏 - 固定高度，独立滚动 */
+/* 左侧目录栏 */
 .sidebar { width: 220px; min-width: 220px; border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; padding: 20px 0; }
 .sidebar-title { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); padding: 0 16px 12px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
 .sidelink { display: block; font-size: 13px; color: var(--muted); text-decoration: none; padding: 6px 16px; border-left: 2px solid transparent; transition: all 0.15s; cursor: pointer; line-height: 1.4; }
@@ -163,7 +35,7 @@ function goBottom() {
 .sidebar-actions button { font-family: var(--font-mono); font-size: 12px; padding: 8px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: left; }
 .sidebar-actions button:hover { border-color: var(--cyan); color: var(--cyan); }
 
-/* 右侧内容区 - 独立滚动 */
+/* 右侧内容区 */
 .md-content { flex: 1; overflow-y: auto; }
 .md-header { padding: 28px 28px 0; position: sticky; top: 0; background: var(--surface); z-index: 1; }
 .md-header h2 { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text); margin: 0 0 12px; }
