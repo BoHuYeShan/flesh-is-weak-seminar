@@ -181,5 +181,21 @@ function setCategory(id) { activeCategory.value = id }
 .contrib span { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--text); }
 .contrib .count { font-size: 11px; color: var(--faint); font-weight: 400; }
 .empty { padding: 40px 24px; text-align: center; color: var(--faint); font-family: var(--font-mono); font-size: 14px; }
-@media (max-width: 768px) { .contribs { grid-template-columns: repeat(2, 1fr); } }
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .sec { padding: 40px 16px; }
+  .sec h2 { font-size: 24px; }
+  .cats { gap: 6px; }
+  .cats button { font-size: 12px; padding: 6px 12px; }
+  .dcard { padding: 16px; }
+  .dcard-top { gap: 12px; }
+  .avatar { width: 40px; height: 40px; }
+  .dcard h3 { font-size: 15px; }
+  .dcard p { font-size: 13px; }
+  .dcard-meta { font-size: 11px; gap: 10px; flex-wrap: wrap; }
+  .contribs { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .contrib { padding: 16px; }
+  .contrib img { width: 48px; height: 48px; }
+  .contrib span { font-size: 12px; }
+}
 </style>

@@ -191,5 +191,27 @@ function scrollToBottom() {
 .scroll-btn { width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 18px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
 .scroll-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
-@media (max-width: 768px) { .toc { display: none; } .modal-overlay { padding: 20px 10px; } .scroll-buttons { right: 12px; bottom: 12px; } }
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .toc { display: none; }
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal { border-radius: 16px 16px 0 0; max-height: 95vh; }
+  .modal-header { padding: 16px 16px 0; }
+  .modal-header h2 { font-size: 18px; }
+  .modal-meta { flex-wrap: wrap; gap: 8px; font-size: 12px; padding: 8px 16px; }
+  .modal-body { padding: 12px 16px 16px; font-size: 14px; line-height: 1.7; }
+  .modal-body h1 { font-size: 20px; }
+  .modal-body h2 { font-size: 18px; }
+  .modal-body h3 { font-size: 16px; }
+  .modal-body pre { padding: 12px; font-size: 12px; }
+  .modal-body table { font-size: 12px; }
+  .modal-body th, .modal-body td { padding: 6px 8px; }
+  .modal-footer { padding: 12px 16px; }
+  .scroll-buttons { right: 12px; bottom: 12px; }
+  .scroll-btn { width: 36px; height: 36px; font-size: 16px; }
+  .list { padding: 20px 16px; }
+  .card-body { padding: 16px; }
+  .card h3 { font-size: 16px; }
+  .card p { font-size: 13px; }
+}
 </style>
