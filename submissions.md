@@ -24,7 +24,7 @@ onMounted(async () => {
 <div v-if="loading" class="loading">加载中...</div>
 <div v-else-if="items.length === 0" class="empty">暂无投稿，快来提交第一篇吧！</div>
 <div v-else class="list">
-  <a v-for="item in items" :key="item.folder" :href="item.url" class="card">
+  <a v-for="item in items" :key="item.folder" :href="'https://github.com/BoHuYeShan/flesh-is-weak-seminar/blob/main/submissions/' + item.folder + '/index.md'" target="_blank" class="card">
     <div v-if="item.cover" class="card-cover">
       <img :src="item.cover" :alt="item.title" />
     </div>
