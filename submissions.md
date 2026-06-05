@@ -51,6 +51,31 @@ function scrollToHeading(text) {
     }
   })
 }
+
+// 监听滚动，更新目录高亮
+function onModalScroll() {
+  const body = document.querySelector('.modal-body')
+  if (!body) return
+  const hs = body.querySelectorAll('h1, h2, h3')
+  let current = ''
+  for (const h of hs) {
+    const rect = h.getBoundingClientRect()
+    if (rect.top <= 120) {
+      current = h.textContent
+    }
+  }
+  if (current) activeHeading.value = current
+}
+
+function scrollToTop() {
+  const content = document.querySelector('.modal-content')
+  if (content) content.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function scrollToBottom() {
+  const content = document.querySelector('.modal-content')
+  if (content) content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' })
+}
 </script>
 
 <div v-if="loading" class="loading">加载中...</div>
@@ -83,7 +108,7 @@ function scrollToHeading(text) {
         </a>
       </nav>
     </aside>
-    <div class="modal-content">
+    <div class="modal-content" @scroll="onModalScroll">
       <div class="modal-header">
         <div>
           <h2>{{ selectedItem.title }}</h2>
@@ -102,6 +127,12 @@ function scrollToHeading(text) {
           在 GitHub 查看原始文件
         </a>
       </div>
+    </div>
+    
+    <!-- 返回顶部/底部按钮 -->
+    <div class="scroll-buttons">
+      <button class="scroll-btn" @click="scrollToTop" title="返回顶部">↑</button>
+      <button class="scroll-btn" @click="scrollToBottom" title="返回底部">↓</button>
     </div>
   </div>
 </div>
@@ -155,5 +186,10 @@ function scrollToHeading(text) {
 .github-link { font-family: var(--font-mono); font-size: 13px; color: var(--cyan); text-decoration: none; }
 .github-link:hover { color: var(--text); }
 
-@media (max-width: 768px) { .toc { display: none; } .modal-overlay { padding: 20px 10px; } }
+/* 滚动按钮 */
+.scroll-buttons { position: fixed; right: 24px; bottom: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 101; }
+.scroll-btn { width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 18px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.scroll-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+@media (max-width: 768px) { .toc { display: none; } .modal-overlay { padding: 20px 10px; } .scroll-buttons { right: 12px; bottom: 12px; } }
 </style>
