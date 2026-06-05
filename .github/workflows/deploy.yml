@@ -45,7 +45,7 @@ jobs:
               fs.mkdirSync(dataDir, { recursive: true });
             }
             
-            // 使用 GraphQL 获取所有 Discussions
+            // ========== 1. 获取 Discussions ==========
             const query = `
               query {
                 repository(owner: "${context.repo.owner}", name: "${context.repo.repo}") {
@@ -62,20 +62,18 @@ jobs:
                       url
                     }
                   }
-                  stargazerCount
                 }
               }
             `;
             
-            const response = await github.graphql(query);
-            const discussions = response.repository.discussions.nodes;
+            const discResponse = await github.graphql(query);
+            const discussions = discResponse.repository.discussions.nodes;
             
-            // 按分类整理数据
             const categories = {
-              'Announcements': { id: 'DIC_kwDOSxxtP84C-jY2', name: '新闻', emoji: '📰' },
-              'Show and tell': { id: 'DIC_kwDOSxxtP84C-jY6', name: '小工具', emoji: '🔧' },
-              'General': { id: 'DIC_kwDOSxxtP84C-jY3', name: '讨论', emoji: '💬' },
-              'Q&A': { id: 'DIC_kwDOSxxtP84C-jY4', name: '问答', emoji: '🙏' }
+              'Announcements': { name: '新闻', emoji: '📰' },
+              'Show and tell': { name: '小工具', emoji: '🔧' },
+              'General': { name: '讨论', emoji: '💬' },
+              'Q&A': { name: '问答', emoji: '🙏' }
             };
             
             const allDiscussions = discussions.map(d => ({
@@ -93,7 +91,7 @@ jobs:
               url: d.url
             }));
             
-            // 获取贡献者
+            // ========== 2. 获取贡献者 ==========
             const contribsResponse = await github.rest.repos.listContributors({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -107,32 +105,89 @@ jobs:
               url: c.html_url
             }));
             
-            // 保存数据
-            const data = {
-              discussions: allDiscussions,
-              contributors: contributors,
-              stats: {
-                total: allDiscussions.length,
-                news: allDiscussions.filter(d => d.category === 'Announcements').length,
-                tools: allDiscussions.filter(d => d.category === 'Show and tell').length,
-                discussions: allDiscussions.filter(d => d.category === 'General').length,
-                contributors: contributors.length
-              },
-              updatedAt: new Date().toISOString()
-            };
+            // ========== 3. 解析 submissions 目录 ==========
+            const submissionsDir = path.join(process.cwd(), 'submissions');
+            const submissions = [];
             
-            // 下载头像到本地
+            if (fs.existsSync(submissionsDir)) {
+              const folders = fs.readdirSync(submissionsDir)
+                .filter(f => fs.statSync(path.join(submissionsDir, f)).isDirectory())
+                .filter(f => !f.startsWith('_'));  // 排除 _template 等
+                
+              for (const folder of folders) {
+                const indexPath = path.join(submissionsDir, folder, 'index.md');
+                if (!fs.existsSync(indexPath)) continue;
+                
+                const content = fs.readFileSync(indexPath, 'utf-8');
+                
+                // 解析 frontmatter
+                const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+                if (!frontmatterMatch) continue;
+                
+                const frontmatter = frontmatterMatch[1];
+                const body = content.replace(/^---\n[\s\S]*?\n---\n?/, '');
+                
+                // 提取字段
+                const getField = (name) => {
+                  const match = frontmatter.match(new RegExp(`${name}:\\s*(.+)`));
+                  return match ? match[1].trim().replace(/^["']|["']$/g, '') : '';
+                };
+                
+                const getArray = (name) => {
+                  const match = frontmatter.match(new RegExp(`${name}:\\s*\\[([^\\]]+)\\]`));
+                  if (!match) return [];
+                  return match[1].split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+                };
+                
+                const title = getField('title');
+                const author = getField('author');
+                const date = getField('date');
+                const summary = getField('summary');
+                const cover = getField('cover');
+                const tags = getArray('tags');
+                
+                // 处理封面图路径
+                let coverPath = '';
+                if (cover) {
+                  coverPath = `submissions/${folder}/${cover}`;
+                }
+                
+                // 获取 body 摘要
+                const bodySummary = body
+                  .replace(/!\[.*?\]\(.*?\)/g, '')  // 移除图片
+                  .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // 移除链接
+                  .replace(/[#*_`~]/g, '')  // 移除 markdown 符号
+                  .replace(/\n+/g, ' ')
+                  .trim()
+                  .substring(0, 200);
+                
+                submissions.push({
+                  folder: folder,
+                  title: title || folder,
+                  author: author || 'Unknown',
+                  date: date || folder.match(/^\d{4}-\d{2}-\d{2}/)?.[0] || '',
+                  summary: summary || bodySummary + '...',
+                  cover: coverPath,
+                  tags: tags,
+                  body: body,
+                  url: `/submissions/${folder}`
+                });
+              }
+            }
+            
+            // 按日期排序
+            submissions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // ========== 4. 下载头像到本地 ==========
             const avatarDir = path.join(process.cwd(), 'public', 'avatars');
             if (!fs.existsSync(avatarDir)) {
               fs.mkdirSync(avatarDir, { recursive: true });
             }
             
-            // 收集所有需要下载的头像 URL
             const avatarUrls = new Set();
             allDiscussions.forEach(d => { if (d.avatar) avatarUrls.add(d.avatar); });
             contributors.forEach(c => { if (c.avatar) avatarUrls.add(c.avatar); });
             
-            // 下载头像
             for (const url of avatarUrls) {
               try {
                 const filename = url.split('/').pop().split('?')[0] + '.png';
@@ -140,7 +195,6 @@ jobs:
                 if (response.ok) {
                   const buffer = await response.arrayBuffer();
                   fs.writeFileSync(path.join(avatarDir, filename), Buffer.from(buffer));
-                  // 更新 URL 为本地路径
                   const localPath = `./avatars/${filename}`;
                   allDiscussions.forEach(d => { if (d.avatar === url) d.avatar = localPath; });
                   contributors.forEach(c => { if (c.avatar === url) c.avatar = localPath; });
@@ -150,12 +204,28 @@ jobs:
               }
             }
             
+            // ========== 5. 保存数据 ==========
+            const data = {
+              discussions: allDiscussions,
+              submissions: submissions,
+              contributors: contributors,
+              stats: {
+                discussions: allDiscussions.length,
+                submissions: submissions.length,
+                news: allDiscussions.filter(d => d.category === 'Announcements').length,
+                tools: allDiscussions.filter(d => d.category === 'Show and tell').length,
+                general: allDiscussions.filter(d => d.category === 'General').length,
+                contributors: contributors.length
+              },
+              updatedAt: new Date().toISOString()
+            };
+            
             fs.writeFileSync(
               path.join(dataDir, 'discussions.json'),
               JSON.stringify(data, null, 2)
             );
             
-            console.log(`Fetched ${allDiscussions.length} discussions, ${contributors.length} contributors, ${avatarUrls.size} avatars`);
+            console.log(`Fetched: ${allDiscussions.length} discussions, ${submissions.length} submissions, ${contributors.length} contributors, ${avatarUrls.size} avatars`);
 
       - name: Build
         run: npm run build

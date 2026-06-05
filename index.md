@@ -14,6 +14,9 @@ hero:
       link: https://github.com/BoHuYeShan/flesh-is-weak-seminar
 
 features:
+  - icon: ✍️
+    title: 群友投稿
+    details: PR 提交的优质文章和资源
   - icon: 📰
     title: 新闻
     details: 群友分享的最新资讯
@@ -23,9 +26,6 @@ features:
   - icon: 💬
     title: 讨论
     details: 热门话题与交流
-  - icon: 👥
-    title: 贡献者
-    details: 活跃群友展示
 ---
 
 <script setup>
