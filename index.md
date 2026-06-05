@@ -30,32 +30,57 @@ features:
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
+import { renderMarkdown } from './.vitepress/theme/markdown.js'
 
 const discussions = ref([])
+const submissions = ref([])
 const contributors = ref([])
-const stats = ref({ total: 0, news: 0, tools: 0, discussions: 0, contributors: 0 })
+const stats = ref({})
 const loading = ref(true)
 const activeCategory = ref('all')
+const allItems = ref([])
 
 const categories = [
   { id: 'all', name: '全部', emoji: '🔥' },
+  { id: 'submission', name: '投稿', emoji: '✍️' },
   { id: 'Announcements', name: '新闻', emoji: '📰' },
   { id: 'Show and tell', name: '小工具', emoji: '🔧' },
   { id: 'General', name: '讨论', emoji: '💬' }
 ]
 
+// 合并 discussions 和 submissions 并按时间排序
 const filtered = computed(() => {
-  if (activeCategory.value === 'all') return discussions.value
-  return discussions.value.filter(d => d.category === activeCategory.value)
+  if (activeCategory.value === 'all') return allItems.value
+  return allItems.value.filter(d => d.category === activeCategory.value)
 })
 
 onMounted(async () => {
   try {
     const res = await fetch('./data/discussions.json')
     const data = await res.json()
-    discussions.value = data.discussions
-    contributors.value = data.contributors
-    stats.value = data.stats
+    discussions.value = data.discussions || []
+    submissions.value = data.submissions || []
+    contributors.value = data.contributors || []
+    stats.value = data.stats || {}
+
+    // 将 submissions 转换为统一格式，合并到 allItems
+    const submissionItems = (data.submissions || []).map(s => ({
+      id: 'sub-' + s.folder,
+      title: s.title,
+      body: s.summary,
+      category: 'submission',
+      author: s.author,
+      avatar: '',
+      date: s.date,
+      dateFormatted: s.date,
+      comments: 0,
+      url: '#',
+      isSubmission: true,
+      submissionData: s
+    }))
+
+    allItems.value = [...submissionItems, ...(data.discussions || [])]
+      .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
   } catch (e) {
     console.error(e)
   } finally {
@@ -68,8 +93,8 @@ function setCategory(id) { activeCategory.value = id }
 
 <section class="sec">
   <div class="sec-head">
-    <span class="lab">Discussions</span>
-    <h2>最新讨论</h2>
+    <span class="lab">Latest</span>
+    <h2>最新内容</h2>
   </div>
   <div class="cats">
     <button v-for="cat in categories" :key="cat.id" :class="{ on: activeCategory === cat.id }" @click="setCategory(cat.id)">
@@ -77,22 +102,40 @@ function setCategory(id) { activeCategory.value = id }
     </button>
   </div>
   <div v-if="loading" class="empty">加载中...</div>
-  <div v-else-if="filtered.length === 0" class="empty">暂无讨论</div>
+  <div v-else-if="filtered.length === 0" class="empty">暂无内容</div>
   <div v-else class="dlist">
-    <a v-for="item in filtered" :key="item.id" :href="item.url" target="_blank" class="dcard">
-      <div class="dcard-top">
-        <img :src="item.avatar" :alt="item.author" class="avatar" />
-        <div>
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.body }}</p>
+    <template v-for="item in filtered" :key="item.id">
+      <!-- 投稿卡片 -->
+      <div v-if="item.isSubmission" class="dcard submission" @click="$router.push('/submissions')">
+        <div class="dcard-top">
+          <div class="dcard-badge">✍️ 投稿</div>
+          <div>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.body }}</p>
+          </div>
+        </div>
+        <div class="dcard-meta">
+          <span>{{ item.author }}</span>
+          <span>{{ item.dateFormatted }}</span>
+          <span class="dcard-link">查看详情 →</span>
         </div>
       </div>
-      <div class="dcard-meta">
-        <span>{{ item.author }}</span>
-        <span>{{ item.dateFormatted }}</span>
-        <span v-if="item.comments">💬 {{ item.comments }}</span>
-      </div>
-    </a>
+      <!-- 讨论卡片 -->
+      <a v-else :href="item.url" target="_blank" class="dcard">
+        <div class="dcard-top">
+          <img v-if="item.avatar" :src="item.avatar" :alt="item.author" class="avatar" />
+          <div>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.body }}</p>
+          </div>
+        </div>
+        <div class="dcard-meta">
+          <span>{{ item.author }}</span>
+          <span>{{ item.dateFormatted }}</span>
+          <span v-if="item.comments">💬 {{ item.comments }}</span>
+        </div>
+      </a>
+    </template>
   </div>
 </section>
 
@@ -121,13 +164,16 @@ function setCategory(id) { activeCategory.value = id }
 .cats button.on { background: var(--cyan); border-color: var(--cyan); color: var(--bg); }
 .cats button:hover:not(.on) { border-color: var(--cyan); color: var(--cyan); }
 .dlist { display: grid; gap: 12px; }
-.dcard { display: block; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
+.dcard { display: block; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s; cursor: pointer; }
 .dcard:hover { border-color: var(--cyan); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0, 229, 176, 0.1); }
+.dcard.submission { border-left: 3px solid var(--cyan); }
 .dcard-top { display: flex; gap: 16px; margin-bottom: 12px; }
+.dcard-badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 10px; background: var(--cyan-dim); color: var(--cyan); border-radius: 100px; white-space: nowrap; height: fit-content; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
 .dcard h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); }
 .dcard p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
 .dcard-meta { display: flex; gap: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); }
+.dcard-link { color: var(--cyan); }
 .contribs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
 .contrib { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
 .contrib:hover { border-color: var(--cyan); transform: translateY(-2px); }
