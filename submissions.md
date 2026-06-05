@@ -3,12 +3,14 @@
 群友提交的优质内容。
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, nextTick } from 'vue'
 
 const items = ref([])
 const loading = ref(true)
 const selectedItem = ref(null)
 const showDetail = ref(false)
+const headings = ref([])
+const activeHeading = ref('')
 
 onMounted(async () => {
   try {
@@ -25,6 +27,11 @@ onMounted(async () => {
 function openItem(item) {
   selectedItem.value = item
   showDetail.value = true
+  headings.value = []
+  activeHeading.value = ''
+  nextTick(() => {
+    extractHeadings()
+  })
 }
 
 function closeDetail() {
@@ -32,24 +39,80 @@ function closeDetail() {
   selectedItem.value = null
 }
 
-// 简单的 markdown 转 HTML
+function extractHeadings() {
+  const body = document.querySelector('.modal-body')
+  if (!body) return
+  const hs = body.querySelectorAll('h1, h2, h3')
+  headings.value = Array.from(hs).map((h, i) => {
+    const id = `heading-${i}`
+    h.id = id
+    return {
+      id,
+      text: h.textContent,
+      level: parseInt(h.tagName.charAt(1))
+    }
+  })
+}
+
+function scrollToHeading(id) {
+  const el = document.getElementById(id)
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    activeHeading.value = id
+  }
+}
+
+// markdown 转 HTML（支持表格、代码块等）
 function renderMarkdown(text) {
   if (!text) return ''
-  return text
+  
+  let html = text
+    // 代码块
+    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="lang-$1">$2</code></pre>')
+    // 行内代码
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    // 表格
+    .replace(/\|(.+)\|\n\|[-\s|]+\|\n((?:\|.+\|\n?)*)/g, (match, header, rows) => {
+      const headers = header.split('|').map(h => h.trim()).filter(Boolean)
+      const rowsArr = rows.trim().split('\n').map(row => 
+        row.split('|').map(cell => cell.trim()).filter(Boolean)
+      )
+      let table = '<table><thead><tr>'
+      headers.forEach(h => { table += `<th>${h}</th>` })
+      table += '</tr></thead><tbody>'
+      rowsArr.forEach(row => {
+        table += '<tr>'
+        row.forEach(cell => { table += `<td>${cell}</td>` })
+        table += '</tr>'
+      })
+      table += '</tbody></table>'
+      return table
+    })
+    // 标题
     .replace(/^### (.*$)/gm, '<h3>$1</h3>')
     .replace(/^## (.*$)/gm, '<h2>$1</h2>')
     .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+    // 粗体、斜体
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`(.*?)`/g, '<code>$1</code>')
+    // 链接、图片
     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
     .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" />')
+    // 列表
     .replace(/^- (.*$)/gm, '<li>$1</li>')
     .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
+    // 分割线
+    .replace(/^---$/gm, '<hr>')
+    // 引用
+    .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+    // 段落
     .replace(/\n\n/g, '</p><p>')
     .replace(/\n/g, '<br>')
-    .replace(/^/, '<p>')
-    .replace(/$/, '</p>')
+  
+  // 包装列表项
+  html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+  
+  return `<p>${html}</p>`
 }
 </script>
 
@@ -77,22 +140,38 @@ function renderMarkdown(text) {
 <!-- 详情弹窗 -->
 <div v-if="showDetail && selectedItem" class="modal-overlay" @click.self="closeDetail">
   <div class="modal">
-    <div class="modal-header">
-      <h2>{{ selectedItem.title }}</h2>
-      <button class="close-btn" @click="closeDetail">✕</button>
-    </div>
-    <div class="modal-meta">
-      <span>{{ selectedItem.author }}</span>
-      <span>{{ selectedItem.date }}</span>
-      <div class="modal-tags">
-        <span v-for="tag in selectedItem.tags" :key="tag" class="tag">{{ tag }}</span>
+    <!-- 右侧目录 -->
+    <aside v-if="headings.length > 0" class="toc">
+      <div class="toc-title">目录</div>
+      <nav>
+        <a v-for="h in headings" :key="h.id" 
+           :class="['toc-link', `level-${h.level}`, { active: activeHeading === h.id }]"
+           @click.prevent="scrollToHeading(h.id)">
+          {{ h.text }}
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- 主内容 -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2>{{ selectedItem.title }}</h2>
+          <div class="modal-meta">
+            <span>{{ selectedItem.author }}</span>
+            <span>{{ selectedItem.date }}</span>
+            <div class="modal-tags">
+              <span v-for="tag in selectedItem.tags" :key="tag" class="tag">{{ tag }}</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="modal-body" v-html="renderMarkdown(selectedItem.body)"></div>
-    <div class="modal-footer">
-      <a :href="'https://github.com/BoHuYeShan/flesh-is-weak-seminar/blob/main/submissions/' + selectedItem.folder + '/index.md'" target="_blank" class="github-link">
-        在 GitHub 查看原始文件 →
-      </a>
+      <div class="modal-body" v-html="renderMarkdown(selectedItem.body)"></div>
+      <div class="modal-footer">
+        <a :href="'https://github.com/BoHuYeShan/flesh-is-weak-seminar/blob/main/submissions/' + selectedItem.folder + '/index.md'" target="_blank" class="github-link">
+          在 GitHub 查看原始文件 →
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -131,26 +210,66 @@ function renderMarkdown(text) {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 100;
-  padding: 20px;
+  padding: 40px 20px;
+  overflow-y: auto;
 }
 .modal {
+  display: flex;
+  gap: 0;
+  max-width: 1000px;
+  width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
-  max-width: 800px;
-  width: 100%;
-  max-height: 90vh;
+  overflow: hidden;
+}
+
+/* 右侧目录 */
+.toc {
+  width: 220px;
+  min-width: 220px;
+  border-right: 1px solid var(--border);
+  padding: 20px 16px;
+  position: sticky;
+  top: 0;
+  max-height: 80vh;
   overflow-y: auto;
 }
+.toc-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+  margin-bottom: 12px;
+}
+.toc-link {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.toc-link:hover { color: var(--text); }
+.toc-link.active { color: var(--cyan); border-left-color: var(--cyan); }
+.toc-link.level-2 { padding-left: 16px; }
+.toc-link.level-3 { padding-left: 24px; font-size: 12px; }
+
+/* 主内容 */
+.modal-content {
+  flex: 1;
+  min-width: 0;
+}
 .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   padding: 24px 24px 0;
 }
 .modal-header h2 {
@@ -158,31 +277,19 @@ function renderMarkdown(text) {
   font-size: 24px;
   font-weight: 700;
   color: var(--text);
-  margin: 0;
+  margin: 0 0 12px;
 }
-.close-btn {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: all 0.15s;
-}
-.close-btn:hover { background: var(--card); color: var(--text); }
 .modal-meta {
   display: flex;
   gap: 16px;
   align-items: center;
-  padding: 12px 24px;
   font-family: var(--font-mono);
   font-size: 13px;
   color: var(--muted);
 }
 .modal-tags { display: flex; gap: 6px; }
 .modal-body {
-  padding: 0 24px 24px;
+  padding: 20px 24px 24px;
   font-size: 15px;
   line-height: 1.8;
   color: var(--text);
@@ -190,10 +297,11 @@ function renderMarkdown(text) {
 .modal-body h1, .modal-body h2, .modal-body h3 {
   font-family: var(--font-display);
   color: var(--text);
-  margin: 24px 0 12px;
+  margin: 28px 0 12px;
+  scroll-margin-top: 20px;
 }
 .modal-body h1 { font-size: 24px; }
-.modal-body h2 { font-size: 20px; }
+.modal-body h2 { font-size: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 .modal-body h3 { font-size: 18px; }
 .modal-body p { margin: 12px 0; }
 .modal-body strong { color: var(--text); }
@@ -205,6 +313,19 @@ function renderMarkdown(text) {
   border-radius: 4px;
   color: var(--cyan);
 }
+.modal-body pre {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+.modal-body pre code {
+  background: none;
+  padding: 0;
+  color: var(--text);
+}
 .modal-body a {
   color: var(--cyan);
   text-decoration: none;
@@ -215,8 +336,40 @@ function renderMarkdown(text) {
   border-radius: 8px;
   margin: 12px 0;
 }
-.modal-body li {
-  margin: 4px 0 4px 20px;
+.modal-body ul, .modal-body ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+.modal-body li { margin: 4px 0; }
+.modal-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 24px 0;
+}
+.modal-body blockquote {
+  border-left: 3px solid var(--cyan);
+  padding-left: 16px;
+  margin: 16px 0;
+  color: var(--muted);
+}
+.modal-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.modal-body th, .modal-body td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+.modal-body th {
+  background: var(--card);
+  font-weight: 600;
+  color: var(--text);
+}
+.modal-body td {
+  color: var(--muted);
 }
 .modal-footer {
   padding: 16px 24px;
@@ -231,4 +384,9 @@ function renderMarkdown(text) {
   transition: color 0.15s;
 }
 .github-link:hover { color: var(--text); }
+
+@media (max-width: 768px) {
+  .toc { display: none; }
+  .modal-overlay { padding: 20px 10px; }
+}
 </style>
