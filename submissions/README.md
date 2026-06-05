@@ -1,95 +1,71 @@
-# 投稿指南
+# 贡献指南
 
-## 目录结构
+## 最简单的贡献方式
 
-每篇投稿是一个独立文件夹，放在 `submissions/` 目录下：
+**只需要传一个 markdown 文件，其他什么都不用改。**
+
+### 步骤
+
+1. Fork 仓库
+2. 在 `submissions/` 下创建文件夹（格式：`YYYY-MM-DD-简短描述`）
+3. 在文件夹里放一个 `index.md`
+4. 提交 PR
+5. 等待合并
+
+### 示例
 
 ```
 submissions/
-├── 2024-01-15-ai-tools/          # 文件夹名：日期-简短描述
-│   ├── index.md                   # 主要内容（必须）
-│   ├── images/                    # 图片（可选）
-│   │   ├── cover.png              # 封面图
-│   │   └── screenshot.png
-│   └── assets/                    # 其他附件（可选）
-│       └── demo.zip
-└── _template/                     # 模板（不要删除）
+└── 2026-06-05-my-article/      ← 你的文件夹
+    └── index.md                  ← 你的文章（唯一必须的文件）
 ```
 
-## 命名规范
-
-### 文件夹命名
-
-- 格式：`YYYY-MM-DD-简短描述`
-- 使用小写字母和连字符
-- 示例：
-  - `2024-01-15-ai-tools`
-  - `2024-01-16-python-guide`
-  - `2024-01-17-vim-tips`
-
-### 图片命名
-
-- 使用小写字母和连字符
-- 格式：`描述.扩展名`
-- 示例：
-  - `cover.png`（封面图）
-  - `screenshot.png`（截图）
-  - `diagram.svg`（示意图）
-
-### 附件命名
-
-- 使用小写字母和连字符
-- 示例：
-  - `demo.zip`
-  - `source-code.tar.gz`
+就这样，其他代码、配置、页面都不需要改。
 
 ## index.md 格式
 
 ```markdown
 ---
-title: 投稿标题
+title: 文章标题
 author: 你的昵称
-date: 2024-01-15
+date: 2026-06-05
 tags: [标签1, 标签2]
-summary: 一句话简介，会显示在卡片上
-cover: images/cover.png  # 封面图，可选
+summary: 一句话简介
 ---
 
-## 主要内容
-
 正文内容...
-
-![截图](images/screenshot.png)
-
-## 相关链接
-
-- [链接](https://example.com)
 ```
 
 ### Frontmatter 字段
 
 | 字段 | 必须 | 说明 |
 |------|------|------|
-| title | ✅ | 投稿标题 |
+| title | ✅ | 文章标题 |
 | author | ✅ | 作者昵称 |
-| date | ✅ | 发布日期（YYYY-MM-DD） |
+| date | ✅ | 日期（YYYY-MM-DD） |
 | tags | ✅ | 标签数组 |
 | summary | ✅ | 一句话简介 |
-| cover | ❌ | 封面图路径（相对于 index.md） |
 
-## 提交流程
+## 图片使用
 
-1. Fork 仓库
-2. 在 `submissions/` 下创建文件夹
-3. 按规范命名文件夹和文件
-4. 编写 `index.md`
-5. 添加图片和附件
-6. 提交 PR
-7. 等待审核合并
+如果需要图片：
+
+1. 在文件夹里创建 `images/` 目录
+2. 把图片放进去
+3. 正文中引用：`![描述](images/xxx.png)`
+
+## 文件夹命名
+
+- 格式：`YYYY-MM-DD-简短描述`
+- 小写字母和连字符
+- 示例：
+  - `2026-06-05-ai-tools`
+  - `2026-06-06-python-guide`
+  - `2026-06-07-vim-tips`
 
 ## 注意事项
 
-- 文件夹名必须唯一，不能与已有投稿重名
-- 图片建议压缩后再上传（TinyPNG）
-- 附件大小不要超过 10MB
+- 文件夹名不能和已有的重复
 - index.md 的 frontmatter 必须完整
+- 图片建议压缩后再上传
+- **只需要传 markdown 文件，其他代码不用改**
