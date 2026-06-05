@@ -4,7 +4,6 @@ author: 你的昵称
 date: 2024-01-15
 tags: [标签1, 标签2]
 summary: 一句话简介，会显示在卡片上
-cover: images/cover.png  # 封面图，可选
 ---
 
 ## 主要内容
@@ -22,7 +21,9 @@ cover: images/cover.png  # 封面图，可选
 
 在正文中引用图片：
 
-![图片描述](images/screenshot.png)
+![图片描述](images/your-image.png)
+
+（请将 your-image.png 替换为实际图片文件名）
 
 ## 相关链接
 
