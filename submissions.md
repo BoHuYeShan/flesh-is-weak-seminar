@@ -27,7 +27,10 @@ onMounted(async () => {
 function open(item) {
   selected.value = item
   activeH.value = ''
-  nextTick(() => { headings.value = extractHeadings(item.body) })
+  nextTick(() => {
+    const h = extractHeadings(item.body)
+    headings.value = Array.isArray(h) ? h.filter(x => x && x.text) : []
+  })
 }
 
 function close() {
@@ -93,9 +96,9 @@ function goBottom() {
     <!-- 左侧：目录导航 -->
     <nav class="sidebar">
       <div class="sidebar-title">目录</div>
-      <a v-for="(h, i) in headings" :key="i"
-         :class="['sidelink', 'lv' + h.level, { on: activeH === h.text }]"
-         @click="jumpTo(h.text)">{{ h.text }}</a>
+        <a v-for="(h, i) in headings" :key="i"
+           :class="['sidelink', 'lv' + (h.level || 1), { on: activeH === h.text }]"
+           @click="jumpTo(h.text)">{{ h.text || '' }}</a>
       <div class="sidebar-actions">
         <button @click="goTop">↑ 回顶部</button>
         <button @click="goBottom">↓ 回底部</button>
