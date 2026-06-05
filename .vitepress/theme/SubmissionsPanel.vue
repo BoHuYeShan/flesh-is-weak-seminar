@@ -13,6 +13,7 @@
         <div class="card-meta">
           <span>{{ item.author || '' }}</span>
           <span>{{ item.date || '' }}</span>
+          <span v-if="item.license" class="card-license">{{ item.license }}</span>
         </div>
       </div>
     </div>
@@ -38,6 +39,7 @@
           <div class="md-meta">
             <span>{{ selected.author || '' }}</span>
             <span>{{ selected.date || '' }}</span>
+            <span v-if="selected.license" class="tag license-tag">{{ selected.license }}</span>
             <span v-for="tag in safeTags" :key="tag" class="tag">{{ tag }}</span>
           </div>
         </header>

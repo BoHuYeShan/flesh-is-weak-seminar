@@ -14,7 +14,9 @@
 .tag { font-family: var(--font-mono); font-size: 11px; padding: 3px 10px; background: var(--cyan-dim); color: var(--cyan); border-radius: 100px; }
 .card h3 { margin: 0 0 8px; font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text); }
 .card p { margin: 0 0 12px; font-size: 14px; color: var(--muted); line-height: 1.6; }
-.card-meta { display: flex; gap: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); }
+.card-meta { display: flex; gap: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); align-items: center; }
+.card-license { padding: 2px 8px; background: var(--cyan-dim); color: var(--cyan); border-radius: 4px; font-size: 11px; }
+.license-tag { background: var(--cyan-dim) !important; color: var(--cyan) !important; }
 .loading, .empty { text-align: center; padding: 60px 28px; color: var(--faint); font-family: var(--font-mono); }
 
 /* 弹窗面板 */

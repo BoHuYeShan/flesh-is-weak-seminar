@@ -73,6 +73,7 @@ onMounted(async () => {
       avatar: '',
       date: s.date,
       dateFormatted: s.date,
+      license: s.license || '',
       comments: 0,
       url: '#',
       isSubmission: true,
@@ -117,6 +118,7 @@ function setCategory(id) { activeCategory.value = id }
         <div class="dcard-meta">
           <span>{{ item.author }}</span>
           <span>{{ item.dateFormatted }}</span>
+          <span v-if="item.license" class="dcard-license">{{ item.license }}</span>
           <span class="dcard-link">查看详情 →</span>
         </div>
       </a>
@@ -172,7 +174,8 @@ function setCategory(id) { activeCategory.value = id }
 .avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
 .dcard h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); }
 .dcard p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
-.dcard-meta { display: flex; gap: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); }
+.dcard-meta { display: flex; gap: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); align-items: center; }
+.dcard-license { padding: 2px 8px; background: var(--cyan-dim); color: var(--cyan); border-radius: 4px; font-size: 11px; }
 .dcard-link { color: var(--cyan); }
 .contribs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
 .contrib { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }

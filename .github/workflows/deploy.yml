@@ -145,6 +145,7 @@ jobs:
                 const summary = getField('summary');
                 const cover = getField('cover');
                 const tags = getArray('tags');
+                const license = getField('license');
                 
                 // 处理封面图路径
                 let coverPath = '';
@@ -169,6 +170,7 @@ jobs:
                   summary: summary || bodySummary + '...',
                   cover: coverPath,
                   tags: tags,
+                  license: license || '',
                   body: body,
                   url: `/submissions/${folder}`
                 });
