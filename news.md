@@ -10,16 +10,38 @@ const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const res = await fetch('https://api.github.com/repos/BoHuYeShan/flesh-is-weak-seminar/discussions?category=Announcements')
+    const query = `
+      query {
+        repository(owner: "BoHuYeShan", name: "flesh-is-weak-seminar") {
+          discussions(first: 20, categoryId: "DIC_kwDOSxxtP84C-jY2", orderBy: {field: CREATED_AT, direction: DESC}) {
+            nodes {
+              number
+              title
+              body
+              createdAt
+              comments { totalCount }
+              author { login avatarUrl }
+              url
+            }
+          }
+        }
+      }
+    `
+    const res = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query })
+    })
     const data = await res.json()
-    items.value = data.map(d => ({
+    items.value = data.data.repository.discussions.nodes.map(d => ({
       id: d.number,
       title: d.title,
       body: d.body?.substring(0, 200) + '...',
-      author: d.user?.login || 'Unknown',
-      avatar: d.user?.avatar_url || '',
-      date: new Date(d.created_at).toLocaleDateString('zh-CN'),
-      url: d.html_url
+      author: d.author?.login || 'Unknown',
+      avatar: d.author?.avatarUrl || '',
+      date: new Date(d.createdAt).toLocaleDateString('zh-CN'),
+      comments: d.comments?.totalCount || 0,
+      url: d.url
     }))
   } catch (e) {
     console.error(e)
@@ -43,6 +65,7 @@ onMounted(async () => {
     <div class="card-meta">
       <span>{{ item.author }}</span>
       <span>{{ item.date }}</span>
+      <span v-if="item.comments">💬 {{ item.comments }}</span>
     </div>
   </a>
 </div>

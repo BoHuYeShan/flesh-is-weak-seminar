@@ -38,9 +38,9 @@ const activeCategory = ref('all')
 
 const categories = [
   { id: 'all', name: '全部', emoji: '🔥' },
-  { id: 'Announcements', name: '新闻', emoji: '📰' },
-  { id: 'Show and tell', name: '小工具', emoji: '🔧' },
-  { id: 'General', name: '讨论', emoji: '💬' }
+  { id: 'Announcements', name: '新闻', emoji: '📰', categoryId: 'DIC_kwDOSxxtP84C-jY2' },
+  { id: 'Show and tell', name: '小工具', emoji: '🔧', categoryId: 'DIC_kwDOSxxtP84C-jY6' },
+  { id: 'General', name: '讨论', emoji: '💬', categoryId: 'DIC_kwDOSxxtP84C-jY3' }
 ]
 
 const filtered = computed(() => {
@@ -50,22 +50,44 @@ const filtered = computed(() => {
 
 onMounted(async () => {
   try {
-    // 获取 Discussions
-    const discRes = await fetch('https://api.github.com/repos/BoHuYeShan/flesh-is-weak-seminar/discussions')
+    // 使用 GraphQL API 获取 Discussions
+    const discQuery = `
+      query {
+        repository(owner: "BoHuYeShan", name: "flesh-is-weak-seminar") {
+          discussions(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
+            nodes {
+              number
+              title
+              body
+              createdAt
+              comments { totalCount }
+              category { name }
+              author { login avatarUrl }
+              url
+            }
+          }
+        }
+      }
+    `
+    const discRes = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: discQuery })
+    })
     const discData = await discRes.json()
-    discussions.value = discData.map(d => ({
+    discussions.value = discData.data.repository.discussions.nodes.map(d => ({
       id: d.number,
       title: d.title,
       body: d.body?.substring(0, 150) + '...',
       category: d.category?.name || 'General',
-      author: d.user?.login || 'Unknown',
-      avatar: d.user?.avatar_url || '',
-      date: new Date(d.created_at).toLocaleDateString('zh-CN'),
-      comments: d.comments,
-      url: d.html_url
+      author: d.author?.login || 'Unknown',
+      avatar: d.author?.avatarUrl || '',
+      date: new Date(d.createdAt).toLocaleDateString('zh-CN'),
+      comments: d.comments?.totalCount || 0,
+      url: d.url
     }))
 
-    // 获取贡献者
+    // 使用 REST API 获取贡献者（这个应该支持 CORS）
     const contribRes = await fetch('https://api.github.com/repos/BoHuYeShan/flesh-is-weak-seminar/contributors')
     const contribData = await contribRes.json()
     contributors.value = contribData.map(c => ({
