@@ -3,7 +3,7 @@
 群友提交的优质内容。
 
 <script setup>
-import { onMounted, ref, nextTick } from 'vue'
+import { onMounted, ref, computed, nextTick } from 'vue'
 import { renderMarkdown, extractHeadings } from './.vitepress/theme/markdown.js'
 
 const items = ref([])
@@ -11,6 +11,11 @@ const loading = ref(true)
 const selected = ref(null)
 const headings = ref([])
 const activeH = ref('')
+
+const safeTags = computed(() => {
+  const s = selected.value
+  return (s && Array.isArray(s.tags)) ? s.tags : []
+})
 
 onMounted(async () => {
   try {
@@ -109,16 +114,16 @@ function goBottom() {
     <!-- 右侧：文章内容 -->
     <div class="md-content" @scroll="onScroll">
       <header class="md-header">
-        <h2>{{ selected.title }}</h2>
+        <h2>{{ (selected && selected.title) || '' }}</h2>
         <div class="md-meta">
-          <span>{{ selected.author }}</span>
-          <span>{{ selected.date }}</span>
-          <span v-for="tag in selected.tags" :key="tag" class="tag">{{ tag }}</span>
+          <span>{{ (selected && selected.author) || '' }}</span>
+          <span>{{ (selected && selected.date) || '' }}</span>
+          <span v-for="tag in safeTags" :key="tag" class="tag">{{ tag }}</span>
         </div>
       </header>
-      <article class="md-body" v-html="renderMarkdown(selected.body)"></article>
+      <article class="md-body" v-html="selected ? renderMarkdown(selected.body || '') : ''"></article>
       <footer class="md-footer">
-        <a :href="'https://github.com/BoHuYeShan/flesh-is-weak-seminar/blob/main/submissions/' + selected.folder + '/index.md'" target="_blank">
+        <a v-if="selected && selected.folder" :href="'https://github.com/BoHuYeShan/flesh-is-weak-seminar/blob/main/submissions/' + selected.folder + '/index.md'" target="_blank">
           在 GitHub 查看原始文件 →
         </a>
       </footer>
