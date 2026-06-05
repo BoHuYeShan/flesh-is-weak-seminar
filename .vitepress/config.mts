@@ -5,6 +5,8 @@ export default defineConfig({
   description: '群友讨论与分享',
   base: '/flesh-is-weak-seminar/',
   
+  srcExclude: ['submissions/**'],
+  
   head: [
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
