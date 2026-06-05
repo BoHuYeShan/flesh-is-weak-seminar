@@ -1,0 +1,97 @@
+/* ============================================
+   血肉苦短研讨班 - Design System
+   Reference: code.html
+   
+   Deep dark theme with cyan accent
+   Fonts: Playfair Display + LXGW WenKai + JetBrains Mono
+   ============================================ */
+
+/* ---- CSS Variables ---- */
+:root {
+  --bg: #06060a;
+  --surface: #0c0c14;
+  --card: #13131f;
+  --border: #1e1e30;
+  --cyan: #00e5b0;
+  --cyan-dim: rgba(0, 229, 176, 0.15);
+  --red: #ff4057;
+  --gold: #ffb830;
+  --blue: #4f7df5;
+  --purple: #9b6dff;
+  --text: #e8e6e3;
+  --muted: #5a5a72;
+  --faint: #3a3a52;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'LXGW WenKai', 'Songti SC', serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+}
+
+/* ---- VitePress Overrides ---- */
+:root {
+  --vp-c-bg: var(--bg);
+  --vp-c-bg-soft: var(--surface);
+  --vp-c-bg-alt: var(--card);
+  --vp-c-bg-elv: var(--surface);
+  --vp-c-divider: var(--border);
+  --vp-c-text-1: var(--text);
+  --vp-c-text-2: var(--muted);
+  --vp-c-text-3: var(--faint);
+  --vp-c-brand-1: var(--cyan);
+  --vp-c-brand-2: var(--cyan);
+  --vp-c-brand-soft: var(--cyan-dim);
+  --vp-font-family-base: var(--font-body);
+  --vp-font-family-mono: var(--font-mono);
+}
+
+/* ---- Global ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--border) var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--cyan); color: var(--bg); }
+
+/* ---- Typography ---- */
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); color: var(--text); letter-spacing: -0.02em; }
+
+/* ---- Hero ---- */
+.VPHero .name { font-family: var(--font-display) !important; background: none !important; -webkit-text-fill-color: unset !important; color: var(--text) !important; }
+.VPHero .text { font-family: var(--font-display) !important; color: var(--text) !important; }
+.VPHero .tagline { font-family: var(--font-body) !important; color: var(--muted) !important; }
+
+/* ---- Nav ---- */
+.VPNav { background: rgba(6, 6, 10, 0.9) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; border-bottom: 1px solid var(--border) !important; }
+
+/* ---- Features ---- */
+.VPFeature { background: var(--surface) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; box-shadow: none !important; }
+.VPFeature .title { font-family: var(--font-mono) !important; font-size: 14px !important; color: var(--text) !important; }
+.VPFeature .details { color: var(--muted) !important; }
+.VPFeature:hover { border-color: var(--cyan) !important; }
+
+/* ---- Buttons ---- */
+.VPButton.brand { background: var(--cyan) !important; color: var(--bg) !important; border: 1px solid var(--cyan) !important; border-radius: 8px !important; font-family: var(--font-mono) !important; font-weight: 600 !important; font-size: 13px !important; }
+.VPButton.brand:hover { transform: translateY(-1px) !important; box-shadow: 0 4px 20px rgba(0, 229, 176, 0.3) !important; }
+.VPButton.alt { background: transparent !important; color: var(--text) !important; border: 1px solid var(--border) !important; border-radius: 8px !important; font-family: var(--font-mono) !important; font-size: 13px !important; }
+.VPButton.alt:hover { border-color: var(--cyan) !important; color: var(--cyan) !important; }
+
+/* ---- Grain Overlay ---- */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }

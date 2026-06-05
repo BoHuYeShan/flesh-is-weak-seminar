@@ -1,0 +1,69 @@
+# 新闻
+
+群友分享的最新资讯。
+
+<script setup>
+import { onMounted, ref } from 'vue'
+
+const items = ref([])
+const loading = ref(true)
+
+onMounted(async () => {
+  try {
+    const res = await fetch('https://api.github.com/repos/BoHuYeShan/flesh-is-weak-seminar/discussions?category=Announcements')
+    const data = await res.json()
+    items.value = data.map(d => ({
+      id: d.number,
+      title: d.title,
+      body: d.body?.substring(0, 200) + '...',
+      author: d.user?.login || 'Unknown',
+      avatar: d.user?.avatar_url || '',
+      date: new Date(d.created_at).toLocaleDateString('zh-CN'),
+      url: d.html_url
+    }))
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loading.value = false
+  }
+})
+</script>
+
+<div v-if="loading" class="loading">加载中...</div>
+<div v-else-if="items.length === 0" class="empty">暂无新闻</div>
+<div v-else class="list">
+  <a v-for="item in items" :key="item.id" :href="item.url" target="_blank" class="card">
+    <div class="card-header">
+      <img :src="item.avatar" :alt="item.author" class="avatar" />
+      <div>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.body }}</p>
+      </div>
+    </div>
+    <div class="card-meta">
+      <span>{{ item.author }}</span>
+      <span>{{ item.date }}</span>
+    </div>
+  </a>
+</div>
+
+<style>
+.list { display: grid; gap: 12px; max-width: 800px; margin: 0 auto; padding: 40px 28px; }
+.card {
+  display: block;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+}
+.card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+.card-header { display: flex; gap: 16px; margin-bottom: 12px; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; }
+.card h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); }
+.card p { margin: 0; font-size: 14px; color: var(--muted); }
+.card-meta { display: flex; gap: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); }
+.loading, .empty { text-align: center; padding: 40px; color: var(--faint); font-family: var(--font-mono); }
+</style>
