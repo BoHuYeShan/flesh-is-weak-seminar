@@ -86,44 +86,43 @@ function goBottom() {
   </div>
 </div>
 
-<Teleport to="body">
-  <div v-if="selected" class="overlay" @click.self="close">
-    <div class="panel">
+<!-- 详情弹窗 -->
+<div v-if="selected" class="overlay" @click.self="close">
+  <div class="panel">
 
-      <!-- 左侧：目录导航 -->
-      <nav class="sidebar">
-        <div class="sidebar-title">目录</div>
-        <a v-for="(h, i) in headings" :key="i"
-           :class="['sidelink', 'lv' + h.level, { on: activeH === h.text }]"
-           @click="jumpTo(h.text)">{{ h.text }}</a>
-        <div class="sidebar-actions">
-          <button @click="goTop">↑ 回顶部</button>
-          <button @click="goBottom">↓ 回底部</button>
-          <button @click="close">✕ 关闭</button>
-        </div>
-      </nav>
-
-      <!-- 右侧：文章内容 -->
-      <div class="md-content" @scroll="onScroll">
-        <header class="md-header">
-          <h2>{{ selected.title }}</h2>
-          <div class="md-meta">
-            <span>{{ selected.author }}</span>
-            <span>{{ selected.date }}</span>
-            <span v-for="tag in selected.tags" :key="tag" class="tag">{{ tag }}</span>
-          </div>
-        </header>
-        <article class="md-body" v-html="renderMarkdown(selected.body)"></article>
-        <footer class="md-footer">
-          <a :href="'https://github.com/BoHuYeShan/flesh-is-weak-seminar/blob/main/submissions/' + selected.folder + '/index.md'" target="_blank">
-            在 GitHub 查看原始文件 →
-          </a>
-        </footer>
+    <!-- 左侧：目录导航 -->
+    <nav class="sidebar">
+      <div class="sidebar-title">目录</div>
+      <a v-for="(h, i) in headings" :key="i"
+         :class="['sidelink', 'lv' + h.level, { on: activeH === h.text }]"
+         @click="jumpTo(h.text)">{{ h.text }}</a>
+      <div class="sidebar-actions">
+        <button @click="goTop">↑ 回顶部</button>
+        <button @click="goBottom">↓ 回底部</button>
+        <button @click="close">✕ 关闭</button>
       </div>
+    </nav>
 
+    <!-- 右侧：文章内容 -->
+    <div class="md-content" @scroll="onScroll">
+      <header class="md-header">
+        <h2>{{ selected.title }}</h2>
+        <div class="md-meta">
+          <span>{{ selected.author }}</span>
+          <span>{{ selected.date }}</span>
+          <span v-for="tag in selected.tags" :key="tag" class="tag">{{ tag }}</span>
+        </div>
+      </header>
+      <article class="md-body" v-html="renderMarkdown(selected.body)"></article>
+      <footer class="md-footer">
+        <a :href="'https://github.com/BoHuYeShan/flesh-is-weak-seminar/blob/main/submissions/' + selected.folder + '/index.md'" target="_blank">
+          在 GitHub 查看原始文件 →
+        </a>
+      </footer>
     </div>
+
   </div>
-</Teleport>
+</div>
 
 <style>
 /* 卡片列表 */
