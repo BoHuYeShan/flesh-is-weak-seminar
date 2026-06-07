@@ -1,26 +1,77 @@
 <template>
-<div class="reader" v-if="issue">
+<div :class="['reader', { 'reader-web-fullscreen': webFullscreen }]" v-if="issue">
+
   <!-- 顶部工具栏 -->
   <div class="reader-toolbar">
-    <button class="toolbar-btn" @click="$emit('back')">← 返回书架</button>
-    <span class="toolbar-title">{{ issue.label }}</span>
-    <div class="toolbar-modes">
-      <button :class="['mode-btn', { active: mode === 'standard' }]" @click="mode = 'standard'">📖 标准</button>
-      <button :class="['mode-btn', { active: mode === 'flip' }]" @click="mode = 'flip'">📑 翻页</button>
+    <div class="toolbar-left">
+      <button class="toolbar-btn" @click="$emit('back')">← 返回书架</button>
+      <span class="toolbar-title">{{ issue.label }}</span>
+    </div>
+
+    <div class="toolbar-center">
+      <!-- 模式切换 -->
+      <div class="toolbar-modes">
+        <button :class="['mode-btn', { active: mode === 'standard' }]" @click="mode = 'standard'">📖 标准</button>
+        <button :class="['mode-btn', { active: mode === 'flip' }]" @click="mode = 'flip'">📑 翻页</button>
+      </div>
+    </div>
+
+    <div class="toolbar-right">
+      <!-- 字体控制 -->
+      <div class="font-controls">
+        <button class="ctrl-btn" @click="toggleFont" :title="fontSerif ? '切换非衬线' : '切换衬线'">
+          {{ fontSerif ? 'Aa' : 'Tt' }}
+        </button>
+        <button class="ctrl-btn" @click="fontSize = Math.max(12, fontSize - 2)">A-</button>
+        <span class="font-size-label">{{ fontSize }}</span>
+        <button class="ctrl-btn" @click="fontSize = Math.min(24, fontSize + 2)">A+</button>
+      </div>
+
+      <!-- TTS 语音 -->
+      <div class="tts-controls" v-if="ttsSupported">
+        <button class="ctrl-btn" @click="toggleTTS" :title="ttsPlaying ? '暂停朗读' : '开始朗读'">
+          {{ ttsPlaying ? '⏸' : '🔊' }}
+        </button>
+        <button class="ctrl-btn" @click="stopTTS" v-if="ttsPlaying || ttsPaused">⏹</button>
+      </div>
+
+      <!-- 全屏 -->
+      <div class="fullscreen-controls">
+        <button class="ctrl-btn" @click="webFullscreen = !webFullscreen" :title="webFullscreen ? '退出网页全屏' : '网页全屏'">
+          {{ webFullscreen ? '⊡' : '⊞' }}
+        </button>
+        <button class="ctrl-btn" @click="toggleBrowserFullscreen" :title="browserFullscreen ? '退出全屏' : '浏览器全屏'">
+          {{ browserFullscreen ? '⊡' : '⛶' }}
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- 标准阅读模式 -->
-  <div v-if="mode === 'standard'" class="reader-standard">
+  <div v-if="mode === 'standard'" class="reader-standard" :style="contentStyle">
     <!-- 封面 -->
     <div class="mag-cover">
       <div class="cover-deco">{{ issue.year }}</div>
       <h1 class="cover-title">{{ issue.label }}</h1>
       <p class="cover-date">{{ issue.dateRange }}</p>
       <div class="cover-stats">
-        <span v-if="issue.submissions.length">📝 {{ issue.submissions.length }} 篇投稿</span>
-        <span v-if="issue.weeklyNews.length">📰 {{ issue.weeklyNews.length }} 条新闻</span>
-        <span v-if="issue.discussions.length">💬 {{ issue.discussions.length }} 条讨论</span>
+        <div class="stat-item" v-if="issue.submissions.length">
+          <span class="stat-num">{{ issue.submissions.length }}</span>
+          <span class="stat-label">投稿</span>
+        </div>
+        <div class="stat-item" v-if="issue.weeklyNews.length">
+          <span class="stat-num">{{ issue.weeklyNews.length }}</span>
+          <span class="stat-label">新闻</span>
+        </div>
+        <div class="stat-item" v-if="issue.discussions.length">
+          <span class="stat-num">{{ issue.discussions.length }}</span>
+          <span class="stat-label">讨论</span>
+        </div>
+      </div>
+      <!-- 本期亮点 -->
+      <div class="cover-highlights" v-if="highlights.length">
+        <div class="highlight-label">本期亮点</div>
+        <div class="highlight-item" v-for="(h, i) in highlights" :key="i">{{ h }}</div>
       </div>
     </div>
 
@@ -61,6 +112,7 @@
           <div class="news-meta">
             <span>{{ news.source }}</span>
             <span>{{ news.date }}</span>
+            <a v-if="news.link" :href="news.link" target="_blank" class="news-link">原文 →</a>
           </div>
         </div>
       </div>
@@ -91,7 +143,8 @@
   <div v-if="mode === 'flip'" class="reader-flip">
     <div class="flip-book" ref="bookRef">
       <div v-for="(page, i) in pages" :key="i"
-           :class="['flip-page', { active: currentPage === i, prev: currentPage > i, next: currentPage < i }]">
+           :class="['flip-page', { active: currentPage === i, prev: currentPage > i, next: currentPage < i }]"
+           :style="pageStyle">
         <div class="page-content" v-html="page.html"></div>
         <div class="page-number">{{ i + 1 }} / {{ pages.length }}</div>
       </div>
@@ -106,7 +159,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { renderMarkdown } from './markdown.js'
 
 const props = defineProps({ issueId: String })
@@ -117,18 +170,69 @@ const mode = ref('standard')
 const currentPage = ref(0)
 const bookRef = ref(null)
 
+// 全屏
+const webFullscreen = ref(false)
+const browserFullscreen = ref(false)
+
+// 字体
+const fontSerif = ref(true)
+const fontSize = ref(15)
+
+// TTS
+const ttsSupported = ref(false)
+const ttsPlaying = ref(false)
+const ttsPaused = ref(false)
+let ttsUtterance = null
+
+// 内容样式
+const contentStyle = computed(() => ({
+  fontFamily: fontSerif.value ? "var(--font-display), Georgia, serif" : "var(--font-mono), sans-serif",
+  fontSize: fontSize.value + 'px'
+}))
+
+// 翻页模式样式
+const pageStyle = computed(() => ({
+  fontFamily: fontSerif.value ? "var(--font-display), Georgia, serif" : "var(--font-mono), sans-serif",
+  fontSize: fontSize.value + 'px'
+}))
+
+// 本期亮点
+const highlights = computed(() => {
+  if (!issue.value) return []
+  const items = []
+  // 取前 3 条投稿标题
+  for (const sub of issue.value.submissions.slice(0, 2)) {
+    items.push(sub.title)
+  }
+  // 取前 2 条新闻标题
+  for (const n of issue.value.weeklyNews.slice(0, 2)) {
+    items.push(n.title)
+  }
+  // 取前 1 条讨论
+  for (const d of issue.value.discussions.slice(0, 1)) {
+    items.push(d.title)
+  }
+  return items.slice(0, 4)
+})
+
 // 将内容拆分为"页"
 const pages = computed(() => {
   if (!issue.value) return []
-
   const result = []
 
   // 封面页
+  const hl = highlights.value.map(h => `<div class="flip-hl-item">· ${h}</div>`).join('')
   result.push({
     html: `<div class="flip-cover">
       <div class="flip-cover-year">${issue.value.year}</div>
       <h1>${issue.value.label}</h1>
       <p>${issue.value.dateRange}</p>
+      <div class="flip-cover-stats">
+        <span>${issue.value.submissions.length} 篇投稿</span>
+        <span>${issue.value.weeklyNews.length} 条新闻</span>
+        <span>${issue.value.discussions.length} 条讨论</span>
+      </div>
+      <div class="flip-cover-hl">${hl}</div>
     </div>`
   })
 
@@ -189,6 +293,75 @@ function nextPage() {
   if (currentPage.value < pages.value.length - 1) currentPage.value++
 }
 
+// 全屏切换
+function toggleBrowserFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen()
+    browserFullscreen.value = true
+  } else {
+    document.exitFullscreen()
+    browserFullscreen.value = false
+  }
+}
+
+function onFullscreenChange() {
+  browserFullscreen.value = !!document.fullscreenElement
+}
+
+// 字体切换
+function toggleFont() {
+  fontSerif.value = !fontSerif.value
+}
+
+// TTS 语音朗读
+function initTTS() {
+  ttsSupported.value = 'speechSynthesis' in window
+}
+
+function toggleTTS() {
+  if (!ttsSupported.value) return
+  if (ttsPlaying.value && !ttsPaused.value) {
+    window.speechSynthesis.pause()
+    ttsPaused.value = true
+    return
+  }
+  if (ttsPaused.value) {
+    window.speechSynthesis.resume()
+    ttsPaused.value = false
+    return
+  }
+  // 开始朗读
+  const text = getFullText()
+  if (!text) return
+  ttsUtterance = new SpeechSynthesisUtterance(text)
+  ttsUtterance.lang = 'zh-CN'
+  ttsUtterance.rate = 1.0
+  ttsUtterance.onend = () => { ttsPlaying.value = false; ttsPaused.value = false }
+  window.speechSynthesis.speak(ttsUtterance)
+  ttsPlaying.value = true
+}
+
+function stopTTS() {
+  window.speechSynthesis.cancel()
+  ttsPlaying.value = false
+  ttsPaused.value = false
+}
+
+function getFullText() {
+  if (!issue.value) return ''
+  const parts = []
+  for (const sub of issue.value.submissions) {
+    parts.push(sub.title + '。' + (sub.body || '').replace(/[#*`\[\]()]/g, '').substring(0, 2000))
+  }
+  for (const n of issue.value.weeklyNews) {
+    parts.push(n.title + '。' + (n.summary || ''))
+  }
+  for (const d of issue.value.discussions) {
+    parts.push(d.title + '。' + (d.summary || ''))
+  }
+  return parts.join('\n\n')
+}
+
 // 键盘翻页
 function onKeydown(e) {
   if (mode.value !== 'flip') return
@@ -209,5 +382,13 @@ watch(() => props.issueId, async (id) => {
 
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
+  document.addEventListener('fullscreenchange', onFullscreenChange)
+  initTTS()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKeydown)
+  document.removeEventListener('fullscreenchange', onFullscreenChange)
+  stopTTS()
 })
 </script>
