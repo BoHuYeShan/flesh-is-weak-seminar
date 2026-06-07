@@ -19,6 +19,7 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '投稿', link: '/submissions' },
       { text: '杂志', link: '/pages/magazine' },
+      { text: '热榜', link: '/pages/hotlist' },
       { text: '新闻', link: '/news' },
       { text: '小工具', link: '/tools' },
       { text: '讨论', link: '/discussions' },
