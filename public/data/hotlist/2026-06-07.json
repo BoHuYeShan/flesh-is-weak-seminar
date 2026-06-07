@@ -1,6 +1,6 @@
 {
   "date": "2026-06-07",
-  "generated": "2026-06-07T06:22:08.675720",
+  "generated": "2026-06-07T06:34:44.563997",
   "github": {
     "title": "GitHub 热门项目",
     "description": "最近7天新建的高星项目",
@@ -18,7 +18,7 @@
         "rank": 2,
         "name": "cpaczek/skylight",
         "description": "Project the aircraft passing overhead onto your ceiling in real time, from an RTL-SDR — with a live sky layer (sun, moon, stars, ISS) and where each plane is headed.",
-        "stars": 2116,
+        "stars": 2117,
         "language": "TypeScript",
         "url": "https://github.com/cpaczek/skylight",
         "created": "2026-06-02"
@@ -27,7 +27,7 @@
         "rank": 3,
         "name": "jd-opensource/JoyAI-Echo",
         "description": "JoyAI-Echo: Pushing the Frontier of Long Audio-Visual Generation",
-        "stars": 747,
+        "stars": 751,
         "language": "Python",
         "url": "https://github.com/jd-opensource/JoyAI-Echo",
         "created": "2026-06-02"
@@ -45,7 +45,7 @@
         "rank": 5,
         "name": "VAST-AI-Research/TripoSplat",
         "description": "TripoSplat converts a single 2D image into high-quality and variable number of 3D Gaussians, developed by TripoAI.",
-        "stars": 500,
+        "stars": 502,
         "language": "Python",
         "url": "https://github.com/VAST-AI-Research/TripoSplat",
         "created": "2026-06-01"
@@ -108,7 +108,7 @@
         "rank": 12,
         "name": "jeff141/meatshell",
         "description": "一个轻量级、低内存占用的 SSH / 终端客户端（A lightweight, low-memory SSH / terminal client）",
-        "stars": 334,
+        "stars": 336,
         "language": "Rust",
         "url": "https://github.com/jeff141/meatshell",
         "created": "2026-06-04"
@@ -117,7 +117,7 @@
         "rank": 13,
         "name": "zenhosta/9drive",
         "description": "9Drive is a storage gateway web app for connecting multiple Google Drive accounts into one virtual storage dashboard. Users can connect Google Drive accounts, track quota, upload files, organize files",
-        "stars": 326,
+        "stars": 328,
         "language": "TypeScript",
         "url": "https://github.com/zenhosta/9drive",
         "created": "2026-06-04"
@@ -153,7 +153,7 @@
         "rank": 17,
         "name": "CWS6206/ai-coding-starter-kit",
         "description": "Kuratierte Agent Skills, Checklisten, Templates und Leitfäden für Schweizer Entwicklungsteams – direkt aus meinen Blog-Artikeln destilliert.",
-        "stars": 260,
+        "stars": 261,
         "language": null,
         "url": "https://github.com/CWS6206/ai-coding-starter-kit",
         "created": "2026-06-05"
