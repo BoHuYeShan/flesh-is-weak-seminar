@@ -236,7 +236,9 @@ jobs:
         run: python scripts/magazine-build.py
 
       - name: Crawl Hotlist
-        run: python scripts/crawl-hotlist.py
+        run: |
+          pip install requests
+          python scripts/crawl-hotlist.py
 
       - name: Commit data to repo
         run: |
