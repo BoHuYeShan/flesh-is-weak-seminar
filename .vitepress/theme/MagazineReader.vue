@@ -1,158 +1,157 @@
 <template>
-<div :class="['reader', { 'reader-web-fullscreen': webFullscreen }]" v-if="issue">
+<!-- 模态弹窗覆盖层 -->
+<div v-if="issue" class="reader-overlay" @click.self="$emit('back')">
+  <div :class="['reader-modal', { 'reader-web-fullscreen': webFullscreen }]">
 
-  <!-- 顶部工具栏 -->
-  <div class="reader-toolbar">
-    <div class="toolbar-left">
-      <button class="toolbar-btn" @click="$emit('back')">← 返回书架</button>
-      <span class="toolbar-title">{{ issue.label }}</span>
-    </div>
-
-    <div class="toolbar-center">
-      <!-- 模式切换 -->
-      <div class="toolbar-modes">
-        <button :class="['mode-btn', { active: mode === 'standard' }]" @click="mode = 'standard'">📖 标准</button>
-        <button :class="['mode-btn', { active: mode === 'flip' }]" @click="mode = 'flip'">📑 翻页</button>
-      </div>
-    </div>
-
-    <div class="toolbar-right">
-      <!-- 字体控制 -->
-      <div class="font-controls">
-        <button class="ctrl-btn" @click="toggleFont" :title="fontSerif ? '切换非衬线' : '切换衬线'">
-          {{ fontSerif ? 'Aa' : 'Tt' }}
-        </button>
-        <button class="ctrl-btn" @click="fontSize = Math.max(12, fontSize - 2)">A-</button>
-        <span class="font-size-label">{{ fontSize }}</span>
-        <button class="ctrl-btn" @click="fontSize = Math.min(24, fontSize + 2)">A+</button>
+    <!-- 顶部工具栏（sticky） -->
+    <div class="reader-toolbar">
+      <div class="toolbar-left">
+        <button class="toolbar-btn" @click="$emit('back')">← 返回书架</button>
+        <span class="toolbar-title">{{ issue.label }}</span>
       </div>
 
-      <!-- TTS 语音 -->
-      <div class="tts-controls" v-if="ttsSupported">
-        <button class="ctrl-btn" @click="toggleTTS" :title="ttsPlaying ? '暂停朗读' : '开始朗读'">
-          {{ ttsPlaying ? '⏸' : '🔊' }}
-        </button>
-        <button class="ctrl-btn" @click="stopTTS" v-if="ttsPlaying || ttsPaused">⏹</button>
-      </div>
-
-      <!-- 全屏 -->
-      <div class="fullscreen-controls">
-        <button class="ctrl-btn" @click="webFullscreen = !webFullscreen" :title="webFullscreen ? '退出网页全屏' : '网页全屏'">
-          {{ webFullscreen ? '⊡' : '⊞' }}
-        </button>
-        <button class="ctrl-btn" @click="toggleBrowserFullscreen" :title="browserFullscreen ? '退出全屏' : '浏览器全屏'">
-          {{ browserFullscreen ? '⊡' : '⛶' }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 标准阅读模式 -->
-  <div v-if="mode === 'standard'" class="reader-standard" :style="contentStyle">
-    <!-- 封面 -->
-    <div class="mag-cover">
-      <div class="cover-deco">{{ issue.year }}</div>
-      <h1 class="cover-title">{{ issue.label }}</h1>
-      <p class="cover-date">{{ issue.dateRange }}</p>
-      <div class="cover-stats">
-        <div class="stat-item" v-if="issue.submissions.length">
-          <span class="stat-num">{{ issue.submissions.length }}</span>
-          <span class="stat-label">投稿</span>
-        </div>
-        <div class="stat-item" v-if="issue.weeklyNews.length">
-          <span class="stat-num">{{ issue.weeklyNews.length }}</span>
-          <span class="stat-label">新闻</span>
-        </div>
-        <div class="stat-item" v-if="issue.discussions.length">
-          <span class="stat-num">{{ issue.discussions.length }}</span>
-          <span class="stat-label">讨论</span>
+      <div class="toolbar-center">
+        <div class="toolbar-modes">
+          <button :class="['mode-btn', { active: mode === 'standard' }]" @click="mode = 'standard'">📖 标准</button>
+          <button :class="['mode-btn', { active: mode === 'flip' }]" @click="mode = 'flip'">📑 翻页</button>
         </div>
       </div>
-      <!-- 本期亮点 -->
-      <div class="cover-highlights" v-if="highlights.length">
-        <div class="highlight-label">本期亮点</div>
-        <div class="highlight-item" v-for="(h, i) in highlights" :key="i">{{ h }}</div>
+
+      <div class="toolbar-right">
+        <div class="font-controls">
+          <button class="ctrl-btn" @click="toggleFont" :title="fontSerif ? '切换非衬线' : '切换衬线'">
+            {{ fontSerif ? 'Aa' : 'Tt' }}
+          </button>
+          <button class="ctrl-btn" @click="fontSize = Math.max(12, fontSize - 2)">A-</button>
+          <span class="font-size-label">{{ fontSize }}</span>
+          <button class="ctrl-btn" @click="fontSize = Math.min(24, fontSize + 2)">A+</button>
+        </div>
+
+        <div class="tts-controls" v-if="ttsSupported">
+          <button class="ctrl-btn" @click="toggleTTS" :title="ttsPlaying ? '暂停朗读' : '开始朗读'">
+            {{ ttsPlaying ? '⏸' : '🔊' }}
+          </button>
+          <button class="ctrl-btn" @click="stopTTS" v-if="ttsPlaying || ttsPaused">⏹</button>
+        </div>
+
+        <div class="fullscreen-controls">
+          <button class="ctrl-btn" @click="toggleBrowserFullscreen" :title="browserFullscreen ? '退出全屏' : '浏览器全屏'">
+            {{ browserFullscreen ? '⊡' : '⛶' }}
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- 投稿 -->
-    <div v-if="issue.submissions.length" class="mag-section">
-      <div class="section-divider">
-        <span class="num">01</span>
-        <span class="label">投稿专栏</span>
-        <span class="line"></span>
-      </div>
-      <div v-for="(sub, i) in issue.submissions" :key="sub.folder" class="mag-article">
-        <div class="article-header">
-          <span class="article-category">投稿 #{{ i + 1 }}</span>
-          <span v-if="sub.license" class="article-license">{{ sub.license }}</span>
-        </div>
-        <h2 class="article-title">{{ sub.title }}</h2>
-        <div class="article-meta">
-          <span>{{ sub.author }}</span>
-          <span>{{ sub.date }}</span>
-          <span v-for="tag in (sub.tags || [])" :key="tag" class="tag">{{ tag }}</span>
-        </div>
-        <div class="article-body" v-html="renderMarkdown(sub.body)"></div>
-      </div>
-    </div>
+    <!-- 内容区域（可滚动） -->
+    <div class="reader-body">
 
-    <!-- 新闻 -->
-    <div v-if="issue.weeklyNews.length" class="mag-section">
-      <div class="section-divider">
-        <span class="num">02</span>
-        <span class="label">本周新闻</span>
-        <span class="line"></span>
-      </div>
-      <div class="news-grid">
-        <div v-for="(news, i) in issue.weeklyNews" :key="i" class="news-card">
-          <span class="news-category">{{ news.category || '其他' }}</span>
-          <h3>{{ news.title }}</h3>
-          <p>{{ news.summary }}</p>
-          <div class="news-meta">
-            <span>{{ news.source }}</span>
-            <span>{{ news.date }}</span>
-            <a v-if="news.link" :href="news.link" target="_blank" class="news-link">原文 →</a>
+      <!-- 标准阅读模式 -->
+      <div v-if="mode === 'standard'" class="reader-standard" :style="contentStyle">
+        <!-- 封面 -->
+        <div class="mag-cover">
+          <div class="cover-deco">{{ issue.year }}</div>
+          <h1 class="cover-title">{{ issue.label }}</h1>
+          <p class="cover-date">{{ issue.dateRange }}</p>
+          <div class="cover-stats">
+            <div class="stat-item" v-if="issue.submissions.length">
+              <span class="stat-num">{{ issue.submissions.length }}</span>
+              <span class="stat-label">投稿</span>
+            </div>
+            <div class="stat-item" v-if="issue.weeklyNews.length">
+              <span class="stat-num">{{ issue.weeklyNews.length }}</span>
+              <span class="stat-label">新闻</span>
+            </div>
+            <div class="stat-item" v-if="issue.discussions.length">
+              <span class="stat-num">{{ issue.discussions.length }}</span>
+              <span class="stat-label">讨论</span>
+            </div>
+          </div>
+          <div class="cover-highlights" v-if="highlights.length">
+            <div class="highlight-label">本期亮点</div>
+            <div class="highlight-item" v-for="(h, i) in highlights" :key="i">{{ h }}</div>
+          </div>
+        </div>
+
+        <!-- 投稿 -->
+        <div v-if="issue.submissions.length" class="mag-section">
+          <div class="section-divider">
+            <span class="num">01</span>
+            <span class="label">投稿专栏</span>
+            <span class="line"></span>
+          </div>
+          <div v-for="(sub, i) in issue.submissions" :key="sub.folder" class="mag-article">
+            <div class="article-header">
+              <span class="article-category">投稿 #{{ i + 1 }}</span>
+              <span v-if="sub.license" class="article-license">{{ sub.license }}</span>
+            </div>
+            <h2 class="article-title">{{ sub.title }}</h2>
+            <div class="article-meta">
+              <span>{{ sub.author }}</span>
+              <span>{{ sub.date }}</span>
+              <span v-for="tag in (sub.tags || [])" :key="tag" class="tag">{{ tag }}</span>
+            </div>
+            <div class="article-body" v-html="renderMarkdown(sub.body)"></div>
+          </div>
+        </div>
+
+        <!-- 新闻 -->
+        <div v-if="issue.weeklyNews.length" class="mag-section">
+          <div class="section-divider">
+            <span class="num">02</span>
+            <span class="label">本周新闻</span>
+            <span class="line"></span>
+          </div>
+          <div class="news-grid">
+            <div v-for="(news, i) in issue.weeklyNews" :key="i" class="news-card">
+              <span class="news-category">{{ news.category || '其他' }}</span>
+              <h3>{{ news.title }}</h3>
+              <p>{{ news.summary }}</p>
+              <div class="news-meta">
+                <span>{{ news.source }}</span>
+                <span>{{ news.date }}</span>
+                <a v-if="news.link" :href="news.link" target="_blank" class="news-link">原文 →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 讨论 -->
+        <div v-if="issue.discussions.length" class="mag-section">
+          <div class="section-divider">
+            <span class="num">03</span>
+            <span class="label">论坛精选</span>
+            <span class="line"></span>
+          </div>
+          <div class="disc-list">
+            <a v-for="disc in issue.discussions" :key="disc.id"
+               :href="disc.url" target="_blank" class="disc-item">
+              <span class="disc-emoji">{{ disc.categoryEmoji }}</span>
+              <div class="disc-content">
+                <h4>{{ disc.title }}</h4>
+                <p>{{ disc.summary }}</p>
+                <span class="disc-meta">{{ disc.author }} · {{ disc.category }}</span>
+              </div>
+            </a>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 讨论 -->
-    <div v-if="issue.discussions.length" class="mag-section">
-      <div class="section-divider">
-        <span class="num">03</span>
-        <span class="label">论坛精选</span>
-        <span class="line"></span>
-      </div>
-      <div class="disc-list">
-        <a v-for="disc in issue.discussions" :key="disc.id"
-           :href="disc.url" target="_blank" class="disc-item">
-          <span class="disc-emoji">{{ disc.categoryEmoji }}</span>
-          <div class="disc-content">
-            <h4>{{ disc.title }}</h4>
-            <p>{{ disc.summary }}</p>
-            <span class="disc-meta">{{ disc.author }} · {{ disc.category }}</span>
+      <!-- 翻页模式 -->
+      <div v-if="mode === 'flip'" class="reader-flip">
+        <div class="flip-book" ref="bookRef">
+          <div v-for="(page, i) in pages" :key="i"
+               :class="['flip-page', { active: currentPage === i, prev: currentPage > i, next: currentPage < i }]"
+               :style="pageStyle">
+            <div class="page-content" v-html="page.html"></div>
+            <div class="page-number">{{ i + 1 }} / {{ pages.length }}</div>
           </div>
-        </a>
+        </div>
+        <div class="flip-controls">
+          <button @click="prevPage" :disabled="currentPage === 0">◀ 上一页</button>
+          <span>{{ currentPage + 1 }} / {{ pages.length }}</span>
+          <button @click="nextPage" :disabled="currentPage >= pages.length - 1">下一页 ▶</button>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <!-- 翻页模式 -->
-  <div v-if="mode === 'flip'" class="reader-flip">
-    <div class="flip-book" ref="bookRef">
-      <div v-for="(page, i) in pages" :key="i"
-           :class="['flip-page', { active: currentPage === i, prev: currentPage > i, next: currentPage < i }]"
-           :style="pageStyle">
-        <div class="page-content" v-html="page.html"></div>
-        <div class="page-number">{{ i + 1 }} / {{ pages.length }}</div>
-      </div>
-    </div>
-    <div class="flip-controls">
-      <button @click="prevPage" :disabled="currentPage === 0">◀ 上一页</button>
-      <span>{{ currentPage + 1 }} / {{ pages.length }}</span>
-      <button @click="nextPage" :disabled="currentPage >= pages.length - 1">下一页 ▶</button>
     </div>
   </div>
 </div>
@@ -200,15 +199,12 @@ const pageStyle = computed(() => ({
 const highlights = computed(() => {
   if (!issue.value) return []
   const items = []
-  // 取前 3 条投稿标题
   for (const sub of issue.value.submissions.slice(0, 2)) {
     items.push(sub.title)
   }
-  // 取前 2 条新闻标题
   for (const n of issue.value.weeklyNews.slice(0, 2)) {
     items.push(n.title)
   }
-  // 取前 1 条讨论
   for (const d of issue.value.discussions.slice(0, 1)) {
     items.push(d.title)
   }
@@ -330,7 +326,6 @@ function toggleTTS() {
     ttsPaused.value = false
     return
   }
-  // 开始朗读
   const text = getFullText()
   if (!text) return
   ttsUtterance = new SpeechSynthesisUtterance(text)

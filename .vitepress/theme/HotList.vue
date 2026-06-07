@@ -9,16 +9,17 @@
 
   <div v-if="loading" class="loading">加载中...</div>
   <div v-else-if="!data" class="empty">暂无数据</div>
-  <div v-else class="hotlist-content">
+  <div v-else class="hotlist-grid">
 
-    <!-- GitHub 热门项目 -->
-    <section class="hotlist-section">
-      <div class="section-header">
-        <span class="section-icon">🐙</span>
-        <h2>{{ data.github.title }}</h2>
-        <span class="section-desc">{{ data.github.description }}</span>
+    <!-- 左侧：GitHub 热门项目 -->
+    <section class="hotlist-col github-col">
+      <div class="col-header">
+        <span class="col-icon">🐙</span>
+        <h2>GitHub 热门项目</h2>
+        <span class="col-desc">最近7天新建的高星项目</span>
       </div>
-      <div class="rank-list">
+      <div v-if="!data.github.items.length" class="col-empty">暂无数据</div>
+      <div v-else class="rank-list">
         <a v-for="item in data.github.items" :key="item.url"
            :href="item.url" target="_blank" class="rank-item">
           <span :class="['rank-num', { top3: item.rank <= 3 }]">{{ item.rank }}</span>
@@ -34,14 +35,15 @@
       </div>
     </section>
 
-    <!-- arXiv 最新论文 -->
-    <section class="hotlist-section">
-      <div class="section-header">
-        <span class="section-icon">📄</span>
-        <h2>{{ data.arxiv.title }}</h2>
-        <span class="section-desc">{{ data.arxiv.description }}</span>
+    <!-- 右侧：arXiv 最新论文 -->
+    <section class="hotlist-col arxiv-col">
+      <div class="col-header">
+        <span class="col-icon">📄</span>
+        <h2>arXiv 最新论文</h2>
+        <span class="col-desc">cs.AI / cs.LG 分类最新提交</span>
       </div>
-      <div class="rank-list">
+      <div v-if="!data.arxiv.items.length" class="col-empty">暂无数据</div>
+      <div v-else class="rank-list">
         <a v-for="item in data.arxiv.items" :key="item.url"
            :href="item.url" target="_blank" class="rank-item paper">
           <span :class="['rank-num', { top3: item.rank <= 3 }]">{{ item.rank }}</span>
@@ -63,7 +65,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 const loading = ref(true)
 const data = ref(null)
@@ -101,8 +103,6 @@ async function loadDate(date) {
     loading.value = false
   }
 }
-
-import { watch } from 'vue'
 
 watch(currentDate, (d) => { if (d) loadDate(d) })
 
