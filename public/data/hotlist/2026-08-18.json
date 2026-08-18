@@ -1,0 +1,593 @@
+{
+  "date": "2026-08-18",
+  "generated": "2026-08-18T03:02:39.986244",
+  "github": {
+    "title": "GitHub 热门项目",
+    "description": "最近7天新建的高星项目",
+    "items": [
+      {
+        "rank": 1,
+        "name": "deepseek-ai/deepseek-harness",
+        "description": "DeepSeek Harness: Everything is a Plugin.",
+        "stars": 152018,
+        "language": "TypeScript",
+        "url": "https://github.com/deepseek-ai/deepseek-harness",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 2,
+        "name": "anywhere-labs/deepseek-harness-desktop",
+        "description": "为 DeepSeek Harness (DSH) 插件生态打造的现代化桌面端解决方案。万物皆「插件」，桌面本身也是「插件」。",
+        "stars": 12035,
+        "language": "TypeScript",
+        "url": "https://github.com/anywhere-labs/deepseek-harness-desktop",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 3,
+        "name": "awesome-dsh-plugin/awesome-dsh-plugin",
+        "description": "A curated list of plugins for DeepSeek Harness (dsh) · DeepSeek Harness 插件精选列表",
+        "stars": 7758,
+        "language": "Python",
+        "url": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 4,
+        "name": "yjh051108/dsh-routing-suite",
+        "description": "dsh-routing-suite — injector + router-standard kit: install the runtime injector first, then the task-aware reasoning-mode router preset (measured P1-P23).",
+        "stars": 5476,
+        "language": "PowerShell",
+        "url": "https://github.com/yjh051108/dsh-routing-suite",
+        "created": "2026-08-14"
+      },
+      {
+        "rank": 5,
+        "name": "zhu1090093659/dsh-web-ui",
+        "description": "Plugin and skin collection for DeepSeek Harness (DSH) Web UI - task board, git graph, right-side panel, remote mobile UI, pet, live token stats, and skin center.",
+        "stars": 4190,
+        "language": "TypeScript",
+        "url": "https://github.com/zhu1090093659/dsh-web-ui",
+        "created": "2026-08-12"
+      },
+      {
+        "rank": 6,
+        "name": "xiaobright/dsh-anchored-standard",
+        "description": "Two-phase DeepSeek Harness preset: Minimal-aligned bootstrap, then full Standard tools (Project2 98/99)",
+        "stars": 3446,
+        "language": "JavaScript",
+        "url": "https://github.com/xiaobright/dsh-anchored-standard",
+        "created": "2026-08-14"
+      },
+      {
+        "rank": 7,
+        "name": "dmmulroy/anti-slop",
+        "description": "Opinionated Oxlint rules for rejecting low-evidence TypeScript and JavaScript patterns",
+        "stars": 2404,
+        "language": "TypeScript",
+        "url": "https://github.com/dmmulroy/anti-slop",
+        "created": "2026-08-12"
+      },
+      {
+        "rank": 8,
+        "name": "cordiverse/paper",
+        "description": "A Programming Paradigm for Spatiotemporal Composability",
+        "stars": 2143,
+        "language": null,
+        "url": "https://github.com/cordiverse/paper",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 9,
+        "name": "ccch1mneyyy/dsh-TUI",
+        "description": "DSH 官方公众号收录的 TUI 补位插件：Claude Code 风，鲸鱼顶栏/实时状态/流式思考/双击 Esc 回滚/上下文进度+TPS。npm 一键装。  DSH official WeChat featured TUI plugin — Claude Code style: whale bar, live status, streaming thoughts, double-Esc rol",
+        "stars": 1840,
+        "language": "TypeScript",
+        "url": "https://github.com/ccch1mneyyy/dsh-TUI",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 10,
+        "name": "xoreaxeaxeax/skitter-creek-bath-salts",
+        "description": "Unlocking _everything_ on the CPU with DRAM scrambling",
+        "stars": 1783,
+        "language": "C",
+        "url": "https://github.com/xoreaxeaxeax/skitter-creek-bath-salts",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 11,
+        "name": "yetone/cumora",
+        "description": "Where agent teams gather. Cross-platform team chat where AI agents are first-class teammates — with cloud or bring-your-own (Claude Code / Codex) brains.",
+        "stars": 1540,
+        "language": "TypeScript",
+        "url": "https://github.com/yetone/cumora",
+        "created": "2026-08-17"
+      },
+      {
+        "rank": 12,
+        "name": "Small-tailqwq/dsh-deep-whale",
+        "description": "DSH Web 鲸鱼娘皮肤系列(深海女仆工坊 maid-atelier)——CC BY-NC-SA 4.0",
+        "stars": 1266,
+        "language": "TypeScript",
+        "url": "https://github.com/Small-tailqwq/dsh-deep-whale",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 13,
+        "name": "Leutenegger/book-to-skill",
+        "description": "Turn any technical book PDF into a Claude Code skill — ready to study, reference, and use while you work.",
+        "stars": 1179,
+        "language": "Python",
+        "url": "https://github.com/Leutenegger/book-to-skill",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 14,
+        "name": "Hisn00w/ASu-skills",
+        "description": "简历包装",
+        "stars": 1168,
+        "language": "HTML",
+        "url": "https://github.com/Hisn00w/ASu-skills",
+        "created": "2026-08-12"
+      },
+      {
+        "rank": 15,
+        "name": "alchaincyf/deepseek-harness-orange-book",
+        "description": "DeepSeek Harness橙皮书《从开机到拆开》：完整系统提示词、129行启动清单、三份原始会话日志——官方文档没有的一手实测。PDF/EPUB/HTML免费下载",
+        "stars": 968,
+        "language": "HTML",
+        "url": "https://github.com/alchaincyf/deepseek-harness-orange-book",
+        "created": "2026-08-14"
+      },
+      {
+        "rank": 16,
+        "name": "vercel-labs/eve-software-factory-template",
+        "description": "Meet Foreman, an eve Software Factory.",
+        "stars": 884,
+        "language": "TypeScript",
+        "url": "https://github.com/vercel-labs/eve-software-factory-template",
+        "created": "2026-08-12"
+      },
+      {
+        "rank": 17,
+        "name": "dsh-market/dsh-market",
+        "description": "The plugin market inside DeepSeek Harness — browse, search, one-click install · DSH 可视化插件市场",
+        "stars": 861,
+        "language": "TypeScript",
+        "url": "https://github.com/dsh-market/dsh-market",
+        "created": "2026-08-14"
+      },
+      {
+        "rank": 18,
+        "name": "dataelement/dsh-desktop",
+        "description": "DeepSeek Harness Desktop",
+        "stars": 809,
+        "language": "TypeScript",
+        "url": "https://github.com/dataelement/dsh-desktop",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 19,
+        "name": "elie222/rakazo",
+        "description": "Open-source Grok Bot alternative. Choose your own model and sandbox.",
+        "stars": 784,
+        "language": "TypeScript",
+        "url": "https://github.com/elie222/rakazo",
+        "created": "2026-08-13"
+      },
+      {
+        "rank": 20,
+        "name": "zouyuxuan122/Deepseek-Harness-EAC",
+        "description": "DeepSeek Harness (dsh) Windows / Linux desktop client - bundled Node.js + dsh CLI, one-click launch, 10 built-in UI skins. EAC: Embracing All Creation 揽尽万象",
+        "stars": 762,
+        "language": "JavaScript",
+        "url": "https://github.com/zouyuxuan122/Deepseek-Harness-EAC",
+        "created": "2026-08-14"
+      }
+    ]
+  },
+  "arxiv": {
+    "title": "arXiv 最新论文",
+    "description": "cs.AI 分类最新提交",
+    "items": [
+      {
+        "rank": 1,
+        "title": "Don't Drop the BATON: Long-Horizon Robot Manipulation via Agentic Subtask Exploration and Transition-aware Memory",
+        "authors": [
+          "Bingxin Xu",
+          "Yuzhang Shang",
+          "Emilio Ferrara"
+        ],
+        "summary": "Long-horizon robot manipulation chains many contact-rich skills into one multi-stage task. Vision-language-action (VLA) models increasingly master the individual skills, yet the chain still fails: errors compound beyond the policy's ability to correct, and one subtask silently constrains the next. A",
+        "url": "http://arxiv.org/abs/2608.16889v1",
+        "pdf": "https://arxiv.org/pdf/2608.16889v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 2,
+        "title": "Improving the matrix multiplication exponent with modern optimization and AlphaEvolve",
+        "authors": [
+          "Emilien Dupont",
+          "Marvin Eisenberger",
+          "Borislav Kozlovskii",
+          "Abbas Mehrabian",
+          "Francisco J. R. Ruiz"
+        ],
+        "summary": "The current best bounds on the matrix multiplication exponent $ω$ are obtained through a refinement of the laser method called combination loss analysis (Duan et al., 2022; Williams et al., 2024; Alman et al., 2025). In this note, we address the optimization problem at the core of this approach and ",
+        "url": "http://arxiv.org/abs/2608.16884v1",
+        "pdf": "https://arxiv.org/pdf/2608.16884v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 3,
+        "title": "AutoSR: Automatic Symbolic Regression by Searching Research States",
+        "authors": [
+          "Kejia Zhang",
+          "Youran Sun",
+          "Xinyu Ren",
+          "Chugang Yi",
+          "Haizhao Yang"
+        ],
+        "summary": "We introduce Automatic Symbolic Regression (AutoSR), a fully automated system that instantiates Research-Space Symbolic Regression by searching persistent scientific investigations rather than isolated equations. Finite, noisy data often yield numerically competitive expressions that imply very diff",
+        "url": "http://arxiv.org/abs/2608.16876v1",
+        "pdf": "https://arxiv.org/pdf/2608.16876v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 4,
+        "title": "Towards Computational Provenance: Carrying Causal-State Evidence in Generated Text",
+        "authors": [
+          "Benjamin Belay"
+        ],
+        "summary": "A language model's output does not by itself provide verifiable evidence about the internal computation that produced it. We study computational provenance: whether generated text can carry detectable evidence of which causally relevant internal state occurred. We test a bounded form of this idea in",
+        "url": "http://arxiv.org/abs/2608.16868v1",
+        "pdf": "https://arxiv.org/pdf/2608.16868v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 5,
+        "title": "What Do Compliance Detectors Read? An Audit of Activation Probes and Guard Models",
+        "authors": [
+          "Saisab Sadhu",
+          "Aadit Sengupta",
+          "Vinay Kumar Sankarapu",
+          "Pratinav Seth"
+        ],
+        "summary": "Regulatory compliance monitoring in deployed language models is increasingly implemented as a legal and audit control, checking model outputs against written rules spanning data protection, healthcare, financial regulation, and platform policy. Such monitoring is meaningful only if a detector's verd",
+        "url": "http://arxiv.org/abs/2608.16852v1",
+        "pdf": "https://arxiv.org/pdf/2608.16852v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 6,
+        "title": "Proteus: Incremental Memory Activation for Long-Context Sequence Modeling",
+        "authors": [
+          "Reza Bayat",
+          "Ali Behrouz",
+          "Vahab Mirrokni",
+          "Aaron Courville"
+        ],
+        "summary": "The quadratic cost of attention-based sequence models for long contexts has motivated a growing line of research on memory-based models that can compress context into a compact state. However, most existing memory models expose a static memory throughout the entire sequence. Because early tokens fac",
+        "url": "http://arxiv.org/abs/2608.16844v1",
+        "pdf": "https://arxiv.org/pdf/2608.16844v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 7,
+        "title": "HAF: Adapting Generalist VLAs to Humanoid Whole-Body Loco-manipulation via Hierarchical Action Flow and Spectral Latent RL",
+        "authors": [
+          "Langzhe Gu",
+          "Chengkai Hou",
+          "Meng Li",
+          "Xinhua Wang",
+          "Jiaming Liu"
+        ],
+        "summary": "Humanoid robots hold great promise as general-purpose agents in human-centered environments, yet generalist vision-language-action (VLA) foundation models are not readily applicable to humanoid whole-body loco-manipulation. The high dimensionality and interdependence of humanoid motions make it chal",
+        "url": "http://arxiv.org/abs/2608.16837v1",
+        "pdf": "https://arxiv.org/pdf/2608.16837v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 8,
+        "title": "Model Hypnosis: Strong control of AI via additive subliminal effects",
+        "authors": [
+          "Enric Boix-Adsera",
+          "Benedict Tessler"
+        ],
+        "summary": "We demonstrate that AI models are broadly susceptible to a phenomenon we call model hypnosis, in which individually weak and seemingly irrelevant cues in the prompt can be systematically combined to strongly control model behavior. Model hypnosis occurs across model families and scales, including in",
+        "url": "http://arxiv.org/abs/2608.16834v1",
+        "pdf": "https://arxiv.org/pdf/2608.16834v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 9,
+        "title": "Policy Iteration with Human Feedback: Bringing Post-Training RL to In-context Learning",
+        "authors": [
+          "Minh-Ha Nguyen",
+          "Cathy Shyr"
+        ],
+        "summary": "Generative pretraining established reusable task representations; later work on language-based task conditioning and in-context learning showed that a fixed model could adapt its behavior from instructions and demonstrations. Policy Iteration with Human Feedback (PIHF) builds on this development and",
+        "url": "http://arxiv.org/abs/2608.16831v1",
+        "pdf": "https://arxiv.org/pdf/2608.16831v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 10,
+        "title": "CaliBench: Are the Stochastic Dynamics of Video World Models Physically Calibrated?",
+        "authors": [
+          "Jonathan Sadeghi",
+          "Jenny Seidenschwarz",
+          "Jesse Allardice",
+          "Sirish Srinivasan",
+          "Benjamin Graham"
+        ],
+        "summary": "Video world models approximate the stochastic distribution of physical outcomes through generative sampling, but existing benchmarks score individual generations or compare distributions coarsely over a whole dataset, leaving the fine-grained aleatoric uncertainty of specific phenomena untested. We ",
+        "url": "http://arxiv.org/abs/2608.16829v1",
+        "pdf": "https://arxiv.org/pdf/2608.16829v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 11,
+        "title": "Quipu: A Governed Bitemporal Knowledge Graph Store",
+        "authors": [
+          "Steve Brown"
+        ],
+        "summary": "Agents now write knowledge graphs, but knowledge-graph stores still carry defaults set when humans curated them: accept writes now and clean later, keep one time axis or none, treat every writer's facts as equally trustworthy, and leave governance to dashboards and middleware. These four defaults ar",
+        "url": "http://arxiv.org/abs/2608.16813v1",
+        "pdf": "https://arxiv.org/pdf/2608.16813v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 12,
+        "title": "When State Becomes an Attack Surface: State-Semantic Injection in LLM-Driven Embodied Agents",
+        "authors": [
+          "Jiawei Liu",
+          "Jiacheng Guo",
+          "Tian Zhang",
+          "Yiwei Xu",
+          "Juan Wang"
+        ],
+        "summary": "Large Language Models (LLMs) have demonstrated capabilities in in-context learning, task decomposition, step-by-step reasoning, and code generation, driving their gradual evolution from text generation models into the core of agents capable of perceiving environments, invoking tools, and executing t",
+        "url": "http://arxiv.org/abs/2608.16806v1",
+        "pdf": "https://arxiv.org/pdf/2608.16806v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 13,
+        "title": "Diagnosing Dense Same-Class Attribute Misbinding in Large Vision-Language Models",
+        "authors": [
+          "Yuanzhi Xu",
+          "Qian Gao",
+          "Jun Fan",
+          "Guohui Ding",
+          "Zhenyu Yang"
+        ],
+        "summary": "Large vision-language models can recognize the objects and attributes in a crowded scene yet assign an attribute to the wrong same-class instance. Generic visual-question-answering accuracy marks the response as wrong, while object-hallucination metrics may regard both the object and attribute as im",
+        "url": "http://arxiv.org/abs/2608.16805v1",
+        "pdf": "https://arxiv.org/pdf/2608.16805v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 14,
+        "title": "Cross-Sign Language Transfer Learning Using Domain Adaptation with Multi-scale Temporal Alignment",
+        "authors": [
+          "Keren Artiaga",
+          "Yang Li",
+          "Ercan Engin Kuruoglu",
+          "Wai Kin",
+          " Chan"
+        ],
+        "summary": "Sign language serves as a vital means of communication for individuals with hearing impairments, yet recognition resources for the over 100 distinct sign languages are severely lacking. In response, we present our work on sign language recognition using transfer learning and the domain adaptation me",
+        "url": "http://arxiv.org/abs/2608.16804v1",
+        "pdf": "https://arxiv.org/pdf/2608.16804v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 15,
+        "title": "When Agents Coordinate: Measuring Coordination in Multi-Agent AI Coding",
+        "authors": [
+          "Giuseppe Destefanis",
+          "Tomaso Aste"
+        ],
+        "summary": "We study how teams of AI coding agents coordinate while solving programming tasks. Current evaluations usually report whether the agents complete the task and how much the run costs, leaving the coordination inside the team largely unmeasured. We introduce an instrument to measure this coordination.",
+        "url": "http://arxiv.org/abs/2608.16801v1",
+        "pdf": "https://arxiv.org/pdf/2608.16801v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 16,
+        "title": "ClawGym II: Exploring Black-Box RL on Agent Harness",
+        "authors": [
+          "Huatong Song",
+          "Fei Bai",
+          "Ming Yang",
+          "Renyuan Li",
+          "Jia Deng"
+        ],
+        "summary": "Agent harnesses have substantially improved performance on long-horizon tasks by coordinating agent interactions with the environment. However, reinforcement learning through complex harnesses remains largely unexplored, as scaling such training to long-horizon agent tasks introduces fundamental cha",
+        "url": "http://arxiv.org/abs/2608.16798v1",
+        "pdf": "https://arxiv.org/pdf/2608.16798v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 17,
+        "title": "UniDot: A Unified Network for Sequence Modeling and Feature Interaction in Large-scale Recommendation",
+        "authors": [
+          "Rongcheng Lin",
+          "Yan Sun",
+          "Jamey Zhang",
+          "Guanglei Xiong",
+          "Ivan Ji"
+        ],
+        "summary": "Industrial recommenders rely on two model families that have evolved largely independently: feature-interaction models over multi-field user/item features, and sequential models over user-behavior histories. Production systems couple them only loosely. To unify the two, we present UniDot, a novel ar",
+        "url": "http://arxiv.org/abs/2608.16797v1",
+        "pdf": "https://arxiv.org/pdf/2608.16797v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 18,
+        "title": "Historical Backtesting for Scientific Question Discovery: A Protocol and Astronomy Pilot",
+        "authors": [
+          "Hui Mao"
+        ],
+        "summary": "Systems that generate scientific research questions are evaluated today by expert scores, LLM-as-judge ratings, or curated case studies -- all subjective, none falsifiable. We formalize historical backtesting as an alternative: a system generates questions from a corpus frozen at a historical cutoff",
+        "url": "http://arxiv.org/abs/2608.16795v1",
+        "pdf": "https://arxiv.org/pdf/2608.16795v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 19,
+        "title": "Neurosymbolic Embodied Agents",
+        "authors": [
+          "Mohammad Albinhassan",
+          "Yuming Feng",
+          "Alessandra Russo",
+          "Pranava Madhyastha"
+        ],
+        "summary": "Language and vision-language models generate plausible embodied plans but do not guarantee executability, as their outputs can violate environment dynamics or act on incorrectly grounded entities. We present a neurosymbolic agent that factors long-horizon household tasks into task-directed visual ex",
+        "url": "http://arxiv.org/abs/2608.16794v1",
+        "pdf": "https://arxiv.org/pdf/2608.16794v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 20,
+        "title": "Steering the Flow: Inverting Face Recognition Models via Gradient-Guided Flow Matching",
+        "authors": [
+          "Ye Lu",
+          "Shen Wang",
+          "Zhaoyang Zhang",
+          "Yihan Yan",
+          "Li Liu"
+        ],
+        "summary": "Model Inversion Attacks (MIAs) aim to reconstruct representative training samples of target identities from face recognition models, exposing critical security vulnerabilities. Existing methods typically rely on indirect guidance or highly stochastic guidance, making it difficult to stably optimize ",
+        "url": "http://arxiv.org/abs/2608.16791v1",
+        "pdf": "https://arxiv.org/pdf/2608.16791v1",
+        "published": "2026-08-17",
+        "category": "cs.AI"
+      },
+      {
+        "rank": 21,
+        "title": "Q-based Variational Inverse Reinforcement Learning",
+        "authors": [
+          "Ondrej Bajgar",
+          "Peter Tisnikar",
+          "Alessandro Abate",
+          "Konstantinos Gatsis",
+          "Maike Osborne"
+        ],
+        "summary": "The development of safe and beneficial AI requires that systems can learn and act in accordance with human preferences. However, explicitly specifying these preferences by hand is often infeasible. Inverse reinforcement learning (IRL) addresses this challenge by inferring preferences, represented as",
+        "url": "http://arxiv.org/abs/2608.16888v1",
+        "pdf": "https://arxiv.org/pdf/2608.16888v1",
+        "published": "2026-08-17",
+        "category": "cs.LG"
+      },
+      {
+        "rank": 22,
+        "title": "Spectral Gaps of Hit-and-Run and Coordinate Hit-and-Run",
+        "authors": [
+          "Yunbum Kook",
+          "Santosh S. Vempala"
+        ],
+        "summary": "For any convex body $\\mathcal{K}\\subset\\mathbb{R}^{n}$ containing a unit ball, the spectral gap of Hit-and-Run is $Ω(1/(n^2 C_{\\mathsf{PI}}))$, where $C_{\\mathsf{PI}}$ is the Poincaré constant of the uniform distribution $π$ over $\\mathcal{K}$. This implies that Hit-and-Run converges to a distributi",
+        "url": "http://arxiv.org/abs/2608.16878v1",
+        "pdf": "https://arxiv.org/pdf/2608.16878v1",
+        "published": "2026-08-17",
+        "category": "cs.LG"
+      },
+      {
+        "rank": 23,
+        "title": "An Analytical-Prior Framework for Data-Efficient Prediction of Sound-Reduction Frequencies in Rectangular Side-Branch Helmholtz Resonators",
+        "authors": [
+          "Jiaming Li"
+        ],
+        "summary": "High-fidelity finite-element simulations can provide accurate numerical predictions for side-branch resonators, but large simulation datasets are expensive to generate and purely data-driven surrogates may become unreliable when simulation-labelled data are scarce. This study develops an analytical-",
+        "url": "http://arxiv.org/abs/2608.16873v1",
+        "pdf": "https://arxiv.org/pdf/2608.16873v1",
+        "published": "2026-08-17",
+        "category": "cs.LG"
+      },
+      {
+        "rank": 24,
+        "title": "Data-Efficient and Interpretable Classification of Circulating Tumor Cell Phenotypes in Microfluidic Devices via Deep Learning",
+        "authors": [
+          "Serena Su",
+          "Yifan Wang",
+          "Senwei Liang"
+        ],
+        "summary": "Accurate classification of circulating tumor cell (CTC) phenotypes can provide valuable information for assessing metastatic potential. Label free microfluidic devices provide a hydrodynamic obstacle course that transforms subtle biophysical characteristics of CTCs, including size and deformability,",
+        "url": "http://arxiv.org/abs/2608.16870v1",
+        "pdf": "https://arxiv.org/pdf/2608.16870v1",
+        "published": "2026-08-17",
+        "category": "cs.LG"
+      },
+      {
+        "rank": 25,
+        "title": "Non-Crossing Deep Quantile Regression for Distributional Survival Prediction",
+        "authors": [
+          "Shuai Huang",
+          "Zhe Qu",
+          "Zhaowei Hua",
+          "Guohao Shen",
+          "Rui Tang"
+        ],
+        "summary": "In survival analysis the way covariates act on the risk of an event often differs between early and late failure times, yet hazard- and mean-based summaries collapse this variation into a single number. Quantile-based modeling instead describes the full conditional distribution on the original time ",
+        "url": "http://arxiv.org/abs/2608.16864v1",
+        "pdf": "https://arxiv.org/pdf/2608.16864v1",
+        "published": "2026-08-17",
+        "category": "cs.LG"
+      },
+      {
+        "rank": 26,
+        "title": "The canonical facets of multi-separator polytopes",
+        "authors": [
+          "Bjoern Andres",
+          "Silvia Di Gregorio",
+          "Jannik Irmai",
+          "Lucas Fabian Naumann",
+          "Shengxian Zhao"
+        ],
+        "summary": "We initiate a polyhedral study of the graph multi-separator problem proposed by Irmai et al. (2024) as an alternative to the lifted multicut problem for application to the task of image segmentation. Starting with an integer linear program (ILP) formulation and the multi-separator polytope spanned b",
+        "url": "http://arxiv.org/abs/2608.16861v1",
+        "pdf": "https://arxiv.org/pdf/2608.16861v1",
+        "published": "2026-08-17",
+        "category": "cs.LG"
+      },
+      {
+        "rank": 27,
+        "title": "zLend: A Dual-Scope Cash-Flow Reconstruction Framework for On-Chain Credit Underwriting",
+        "authors": [
+          "Girish G N",
+          "Ashutosh Sahoo",
+          "Akshay SP",
+          "Gurukiran S",
+          "Dhanashekar Kandaswamy"
+        ],
+        "summary": "Decentralized lending lacks a credit bureau: a borrower's capacity to repay must be inferred entirely from public on-chain activity, without income verification or a liability record. This paper presents zLend, a deployed cash-flow underwriting framework that reconstructs a wallet's daily balance hi",
+        "url": "http://arxiv.org/abs/2608.16856v1",
+        "pdf": "https://arxiv.org/pdf/2608.16856v1",
+        "published": "2026-08-17",
+        "category": "cs.LG"
+      }
+    ]
+  }
+}
